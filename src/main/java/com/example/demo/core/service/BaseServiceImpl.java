@@ -7,9 +7,11 @@ import jakarta.persistence.criteria.CriteriaUpdate;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 
+import java.util.Locale;
+
 @Transactional
 public class BaseServiceImpl<E extends BaseEntity<ID>, ID, R extends BaseRepository<E, ID>> extends BaseEntityManager implements BaseService<E, ID> {
-
+    private static final ThreadLocal<Locale> languageContext = new ThreadLocal<>();
     protected R repository;
     private Class<E> entityClass;
 
@@ -44,6 +46,14 @@ public class BaseServiceImpl<E extends BaseEntity<ID>, ID, R extends BaseReposit
         update.set("isDelete", Boolean.TRUE);
         update.where(cb.equal(root.get("id"), id));
         return getEntityManager().createQuery(update).executeUpdate() > 0;
+    }
+
+    public void setLanguageContext(Locale languageContext) {
+        this.languageContext.set(languageContext);
+    }
+
+    public static ThreadLocal<Locale> getLanguageContext() {
+        return languageContext;
     }
 
 }

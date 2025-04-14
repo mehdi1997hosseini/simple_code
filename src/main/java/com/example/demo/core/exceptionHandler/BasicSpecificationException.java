@@ -1,6 +1,6 @@
 package com.example.demo.core.exceptionHandler;
 
-public interface BasicException {
+public interface BasicSpecificationException {
     String getErrorCode();
     String getMessage();
 

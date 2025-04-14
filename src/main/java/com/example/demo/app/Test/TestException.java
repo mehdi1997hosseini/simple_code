@@ -1,8 +1,8 @@
-package com.example.demo.Test;
+package com.example.demo.app.Test;
 
-import com.example.demo.core.exceptionHandler.BasicException;
+import com.example.demo.core.exceptionHandler.BasicSpecificationException;
 
-public enum TestException implements BasicException {
+public enum TestException implements BasicSpecificationException {
     BY_TEST_NAME_NOT_FOUND ("error.notFoundByTestName","401"),
     ;
 

@@ -1,7 +1,7 @@
-package com.example.demo.Test;
+package com.example.demo.app.Test;
 
-import com.example.demo.core.exceptionHandler.ResponseLangType;
-import com.example.demo.core.exceptionHandler.PssNoteRunTimeException;
+import com.example.demo.core.exceptionHandler.lang.ResponseLangType;
+import com.example.demo.core.exceptionHandler.exception.AppRunTimeException;
 import com.example.demo.core.service.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class TestServiceImpl extends BaseServiceImpl<TestEntity, String, TestRep
     public String getTestByTestName(String testName) {
         List<TestEntity> allByTestName = repository.findAllByTestName(testName);
         if (allByTestName.isEmpty()) {
-            throw new PssNoteRunTimeException(TestException.BY_TEST_NAME_NOT_FOUND, ResponseLangType.FA, null ,testName);
+            throw new AppRunTimeException(TestException.BY_TEST_NAME_NOT_FOUND,testName);
         }
         return allByTestName.toString();
     }

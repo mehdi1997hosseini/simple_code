@@ -1,6 +1,5 @@
-package com.example.demo.core.converter;
+package com.example.demo.core.utility;
 
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,14 +14,18 @@ public abstract class ConverterFileUtil {
 
     private ConverterFileUtil() {}
 
-    public static Resource convertStringToResource(String fileName, String fileContent) {
+    /**
+     * @Description <p>تبدیل و ریختن یک مقدار رشته ای درون یک فایل براساس نام و مقداری که قرار است درون فایل ریخته شود.</p>
+     * @Pattern <p>The desired shedding inside a text file -> resource (download)</p>
+     * @Parameters <p>filename -> name file | fileContent -> value in the file </p>
+     * */
+    public static Resource convertStringToTextResource(String fileName, String fileContent) {
         if (fileName == null && fileContent == null)
             throw new NullPointerException("File path and name can't be null");
 
         String formatFilePrivateKey = ".txt";
 
-        fileName = fileName.replaceAll(formatFilePrivateKey, "");
-
+        assert fileName != null;
         fileName = fileName.contentEquals(formatFilePrivateKey) ? fileName.replaceAll(formatFilePrivateKey, "") + "_" +
                 System.currentTimeMillis() + formatFilePrivateKey : fileName + "_" + System.currentTimeMillis() + formatFilePrivateKey;
 

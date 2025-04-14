@@ -1,6 +1,9 @@
-package com.example.demo.Test;
+package com.example.demo.app.Test;
 
 import com.example.demo.core.controller.BaseController;
+import com.example.demo.core.utility.validation.nin.NIN;
+import com.example.demo.core.utility.validation.nin.NIN_TypeVld;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,5 +27,9 @@ public class TestController extends BaseController<TestEntity,String,TestService
         return new ResponseEntity<>(service.getTestByTestName(testName), HttpStatus.OK);
     }
 
+    @GetMapping("testNationalCode/")
+    public ResponseEntity<?> testNationalCode(@RequestParam @NIN(NIN_type = NIN_TypeVld.SSN_IR) String nationalCode) {
+        return ResponseEntity.ok("NationalCode: " + nationalCode);
+    }
 
 }

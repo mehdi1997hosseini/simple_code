@@ -1,5 +1,6 @@
 package com.example.demo.core.exceptionHandler;
 
+import com.example.demo.core.utility.TextUtil;
 import jakarta.annotation.PostConstruct;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -27,13 +28,13 @@ public class DynamicMessageSource {
 
     @PostConstruct
     public void loadAllErrorFiles() throws IOException {
-        String basePath = "src/main/java/com/example/demo"; // مسیر اصلی پکیج‌های شما
+        String basePath = "src/main/java/com/example/demo"; // مسیر اصلی پکیج‌های
         String pattern = basePath + "/**/Error_*.properties"; // الگوی جستجو برای فایل‌ها
 
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources = resolver.getResources("file:" + pattern);
         for (Resource resource : resources) {
-            String filename = resource.getFilename(); // error_user_fa.properties
+            String filename = resource.getFilename();
             if (filename == null || !filename.startsWith("Error_")) continue;
 
             String langPart = filename.substring(filename.lastIndexOf('_') + 1).replace(".properties", "");
@@ -61,6 +62,7 @@ public class DynamicMessageSource {
 
     public String convertMessageByDigits(String key, Locale locale, Object... args) {
         String template = getMessage(key, locale);
+        if (args == null || args.length == 0) return template;
         try {
             return MessageFormat.format(template, args);
         } catch (IllegalArgumentException e) {

@@ -1,4 +1,4 @@
-package com.example.demo.core.converter;
+package com.example.demo.core.mapper;
 
 import java.util.List;
 

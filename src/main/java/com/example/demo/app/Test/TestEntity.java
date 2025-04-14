@@ -1,4 +1,4 @@
-package com.example.demo.Test;
+package com.example.demo.app.Test;
 
 import com.example.demo.core.entity.BaseEntityAudit;
 import jakarta.persistence.Entity;
