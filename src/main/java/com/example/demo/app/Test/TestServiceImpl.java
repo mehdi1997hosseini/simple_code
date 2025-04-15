@@ -1,14 +1,13 @@
 package com.example.demo.app.Test;
 
-import com.example.demo.core.exceptionHandler.lang.ResponseLangType;
 import com.example.demo.core.exceptionHandler.exception.AppRunTimeException;
-import com.example.demo.core.service.BaseServiceImpl;
+import com.example.demo.core.service.BasicServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class TestServiceImpl extends BaseServiceImpl<TestEntity, String, TestRepository> implements TestService {
+public class TestServiceImpl extends BasicServiceImpl<TestEntity, Long, TestRepository> implements TestService {
 
     public TestServiceImpl(TestRepository repository) {
         super(repository);

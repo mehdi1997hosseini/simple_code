@@ -1,13 +1,14 @@
 package com.example.demo.core.exceptionHandler;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Setter
 @Getter
 @ToString
-@Builder
 public class BasicResponseException {
 
     private String message;

@@ -7,7 +7,7 @@ import java.util.List;
  * D is DTO class
  * for use from library mapstruct
  * */
-public interface BaseMapper<E, D> {
+public interface BasicMapper<E, D> {
     E toEntity(D d);
     List<E> toEntity(List<D> ds);
     D toDto(E e);

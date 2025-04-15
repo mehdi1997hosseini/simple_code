@@ -1,30 +1,23 @@
 package com.example.demo.core.service;
 
-import com.example.demo.core.entity.BaseEntity;
-import com.example.demo.core.repository.BaseRepository;
+import com.example.demo.core.entity.BasicEntity;
+import com.example.demo.core.repository.BasicRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaUpdate;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 
-import java.util.Locale;
-
 @Transactional
-public class BaseServiceImpl<E extends BaseEntity<ID>, ID, R extends BaseRepository<E, ID>> extends BaseEntityManager implements BaseService<E, ID> {
-    private static final ThreadLocal<Locale> languageContext = new ThreadLocal<>();
+public class BasicServiceImpl<E extends BasicEntity<ID>, ID, R extends BasicRepository<E, ID>> extends BaseEntityManager implements BasicService<E, ID> {
     protected R repository;
     private Class<E> entityClass;
 
-    private BaseServiceImpl(Class<E> entityClass) {
-        this.entityClass = entityClass;
-    }
-
-    public BaseServiceImpl(R repository) {
+    public BasicServiceImpl(R repository) {
         this.repository = repository;
     }
 
-    public BaseServiceImpl(R repository, Class<E> entityClass) {
-        this.repository = repository;
+    public BasicServiceImpl(R repository, Class<E> entityClass) {
+        this(repository);
         this.entityClass = entityClass;
     }
 
@@ -46,14 +39,6 @@ public class BaseServiceImpl<E extends BaseEntity<ID>, ID, R extends BaseReposit
         update.set("isDelete", Boolean.TRUE);
         update.where(cb.equal(root.get("id"), id));
         return getEntityManager().createQuery(update).executeUpdate() > 0;
-    }
-
-    public void setLanguageContext(Locale languageContext) {
-        this.languageContext.set(languageContext);
-    }
-
-    public static ThreadLocal<Locale> getLanguageContext() {
-        return languageContext;
     }
 
 }

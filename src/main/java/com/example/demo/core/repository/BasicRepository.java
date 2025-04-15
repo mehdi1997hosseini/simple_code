@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
-public interface BaseRepository<E, ID> extends CrudRepository<E, ID> , JpaRepository<E, ID> {
+public interface BasicRepository<E, ID> extends CrudRepository<E, ID> , JpaRepository<E, ID> {
 }

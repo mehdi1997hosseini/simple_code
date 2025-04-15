@@ -1,7 +1,11 @@
 package com.example.demo.core.config;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+
 import java.util.Locale;
 
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class RequestLanguageContext {
     private static final ThreadLocal<Locale> LANG_CONTEXT = new ThreadLocal<>();
 

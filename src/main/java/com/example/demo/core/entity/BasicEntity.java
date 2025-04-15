@@ -1,21 +1,18 @@
 package com.example.demo.core.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Date;
 import java.util.UUID;
 
 @Getter
 @Setter
 @MappedSuperclass
-public class BaseEntity<ID>  implements Serializable {
+public class BasicEntity<ID>  implements Serializable {
     @Id
     private ID id;
 

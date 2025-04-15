@@ -17,7 +17,7 @@ import java.util.Objects;
 @Setter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseEntityAudit<ID> extends BaseEntity<ID> implements Serializable {
+public abstract class BasicEntityAudit<ID> extends BasicEntity<ID> implements Serializable {
     @CreatedBy
     @Column(name = "created_by")
     private String createdBy;
@@ -59,7 +59,7 @@ public abstract class BaseEntityAudit<ID> extends BaseEntity<ID> implements Seri
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BaseEntityAudit that)) return false;
+        if (!(o instanceof BasicEntityAudit that)) return false;
         if (!super.equals(o)) return false;
         return createdBy.equals(that.createdBy) &&
                 updatedBy.equals(that.updatedBy) &&
