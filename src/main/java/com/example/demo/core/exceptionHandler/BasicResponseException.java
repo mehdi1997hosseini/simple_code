@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @ToString
+@Builder
 public class BasicResponseException {
 
     private String message;

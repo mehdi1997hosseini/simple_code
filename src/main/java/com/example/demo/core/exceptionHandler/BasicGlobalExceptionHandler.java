@@ -66,10 +66,11 @@ public class BasicGlobalExceptionHandler {
 
     @ExceptionHandler(SQLException.class)
     protected ResponseEntity<Object> handleSQLExceptions(SQLException ex) {
-//        return buildResponseEntity(AppSqlException.doJob(ex));
-        return null;
+        AppSqlException appSqlException = AppSqlException.doJob(ex);
+        String message = dynamicMessageSource.convertMessageByDigits(appSqlException.getError().getMessage(), lang(null), appSqlException.getDigits());
+        BasicResponseException responseException = new BasicResponseException(message, appSqlException.getError().getErrorCode(), appSqlException.getDetail());
+        return buildResponse(responseException,appSqlException.getHttpStatus());
     }
-
 
     private ResponseEntity<Object> buildResponse(BasicResponseException responseException, HttpStatus status) {
         return new ResponseEntity<>(responseException, status);
