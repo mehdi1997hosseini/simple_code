@@ -1,5 +1,8 @@
 package com.example.demo.core.utility;
 
+import java.text.MessageFormat;
+import java.util.List;
+
 public class TextUtil {
     /**
      * @param text The text for convert to capitalize.
@@ -121,5 +124,37 @@ public class TextUtil {
         // استفاده از regex برای جدا کردن حروف بزرگ
         return (camelCaseText == null || camelCaseText.isEmpty()) ? null : camelCaseText.replaceAll("([a-z])([A-Z])", "$1 $2")
                 .replaceAll("([A-Z])([A-Z][a-z])", "$1 $2");
+    }
+
+    public static class DynamicMessageFormatter{
+        /**
+         * @Description <p> فرمت کردن لیست به عنوان متن </p>
+         * */
+        public static String formatListTemplate(String template, String listPlaceholder, List<String> items) {
+            String listAsText = items == null || items.isEmpty()
+                    ? "هیچ موردی یافت نشد"
+                    : String.join(", ", items);
+
+            return template.replace(listPlaceholder, listAsText);
+        }
+
+        /**
+         * @Description <p>فرمت کردن پیام با MessageFormat و اضافه کردن آرگومان‌ها</p>
+         */
+        public static String formatWithDynamicArgs(String template, Object... args) {
+            try {
+                return MessageFormat.format(template, args);
+            } catch (IllegalArgumentException e) {
+                return "Formatting error: " + e.getMessage();
+            }
+        }
+
+        /**
+         * @Description <p>ساخت پیام داینامیک با لیست و آرگومان‌ها</p>
+         * */
+        public static String createMessage(String template, List<String> items, String listPlaceholder, Object... args) {
+            String withList = formatListTemplate(template, listPlaceholder, items);
+            return formatWithDynamicArgs(withList, args);
+        }
     }
 }

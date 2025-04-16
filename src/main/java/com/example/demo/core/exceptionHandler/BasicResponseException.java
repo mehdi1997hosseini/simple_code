@@ -1,14 +1,14 @@
 package com.example.demo.core.exceptionHandler;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Setter
 @Getter
-@Builder
+@ToString
 public class BasicResponseException {
 
     private String message;
@@ -16,13 +16,20 @@ public class BasicResponseException {
     private String detailMessage;
     private LocalDateTime localDateTime;
 
-    @Override
-    public String toString() {
-        return "{" +
-                "message='" + message + '\'' +
-                ", code='" + code + '\'' +
-                ", detailMessage='" + detailMessage + '\'' +
-                ", localDateTime=" + localDateTime +
-                '}';
+    private BasicResponseException() {
+        this.localDateTime = LocalDateTime.now();
+    }
+
+    public BasicResponseException(String message, String code) {
+        this();
+        this.message = message;
+        this.code = code;
+    }
+
+    public BasicResponseException(String message, String code, String detailMessage) {
+        this();
+        this.message = message;
+        this.code = code;
+        this.detailMessage = detailMessage;
     }
 }
