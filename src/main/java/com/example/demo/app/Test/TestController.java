@@ -7,8 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
-@RequestMapping("/test/")
+@RequestMapping("test/")
 public class TestController extends BasicController<TestEntity,Long,TestService> {
 
     public TestController(TestService service) {
@@ -30,5 +33,14 @@ public class TestController extends BasicController<TestEntity,Long,TestService>
     public ResponseEntity<?> testNationalCode(@RequestParam @NIN(NIN_type = NIN_TypeVld.SSN_IR) String nationalCode) {
         return ResponseEntity.ok("NationalCode: " + nationalCode);
     }
+
+    @PostMapping("getTokenTest")
+    public ResponseEntity<Map<String,Object>> getTokenTest(@RequestBody TokenRequestTest body) {
+        Map<String,Object> response = new HashMap<>();
+        response.put("access_token","mehdiHosseini");
+        response.put("expires_in",180000);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
 
 }

@@ -5,6 +5,8 @@ import com.example.demo.core.thirdParty.externalOrganization.dto.ExternalOrganiz
 import com.example.demo.core.thirdParty.externalOrganization.mapper.ExternalOrganizationMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ExternalOrganizationServiceImpl extends BasicServiceImpl<ExternalOrganizationEntity, String, ExternalOrganizationRepository> implements ExternalOrganizationService {
     private final ExternalOrganizationMapper mapper;
@@ -22,5 +24,24 @@ public class ExternalOrganizationServiceImpl extends BasicServiceImpl<ExternalOr
         return externalOrganization;
     }
 
+    @Override
+    public List<ExternalOrganizationDto> findAll() {
+        List<ExternalOrganizationEntity> allExtOrg = repository.findAll();
+        if (!allExtOrg.isEmpty()) return null;
+
+        return mapper.toDto(allExtOrg);
+    }
+
+    @Override
+    public List<ExternalOrganizationEntity> findAllInCache() {
+        return repository.findAll();
+    }
+
+    @Override
+    public ExternalOrganizationEntity findExternalOrganizationByOrgName(ExternalOrganizationName orgName) {
+        return getEntityManager().createQuery("SELECT e FROM ExternalOrganizationEntity e WHERE e.orgName = :orgName", ExternalOrganizationEntity.class)
+                .setParameter("orgName", orgName)
+                .getSingleResult();
+    }
 
 }

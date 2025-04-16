@@ -1,9 +1,7 @@
 package com.example.demo.core.thirdParty.externalOrganization;
 
 import com.example.demo.core.entity.BasicEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -15,11 +13,13 @@ import lombok.*;
 @ToString
 public class ExternalOrganizationEntity extends BasicEntity<String> {
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
+    @Column(name = "EXTERNAL_ORGANIZATION_NAME", updatable = false, nullable = false)
     private ExternalOrganizationName orgName;           // نام سازمان خارجی
     private String authUrl;        // URL برای دریافت توکن
     private String clientId;       // شناسه کلاینت (Client ID)
     private String clientSecret;   // رمز کلاینت (Client Secret)
+    @Enumerated(EnumType.STRING)
     private TokenType tokenType;      // نوع توکن (مثل Bearer یا JWT)
     private String username;
     private String password;
