@@ -30,7 +30,7 @@ public class TestController extends BasicController<TestEntity,Long,TestService>
     }
 
     @GetMapping("testNationalCode/")
-    public ResponseEntity<?> testNationalCode(@RequestParam @NIN(NIN_type = NIN_TypeVld.SSN_IR) String nationalCode) {
+    public ResponseEntity<?> testNationalCode(@RequestParam @NIN(NIN_type = NIN_TypeVld.SSN_PERSON) String nationalCode) {
         return ResponseEntity.ok("NationalCode: " + nationalCode);
     }
 
@@ -38,7 +38,7 @@ public class TestController extends BasicController<TestEntity,Long,TestService>
     public ResponseEntity<Map<String,Object>> getTokenTest(@RequestBody TokenRequestTest body) {
         Map<String,Object> response = new HashMap<>();
         response.put("access_token","mehdiHosseini");
-        response.put("expires_in",180000);
+        response.put("expires_in",2);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 

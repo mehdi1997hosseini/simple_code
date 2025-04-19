@@ -15,5 +15,7 @@ import java.time.Instant;
 public class ExternalTokenDto implements Serializable {
     private String token;
     private Instant expiresAt;
+    private boolean isValidToken;
+    private int countTry = 0;
 
 }

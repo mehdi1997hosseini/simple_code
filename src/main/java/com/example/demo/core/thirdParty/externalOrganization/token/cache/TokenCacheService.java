@@ -5,7 +5,7 @@ import com.example.demo.core.thirdParty.externalOrganization.token.ExternalToken
 
 public interface TokenCacheService {
     public void saveOrUpdateToken(ExternalOrganizationName orgId, ExternalTokenDto tokenInfo);
-    public ExternalTokenDto getToken(ExternalOrganizationName orgId);
+    public ExternalTokenDto getToken(ExternalOrganizationName orgName);
     public void clearDataTokens();
 
 }

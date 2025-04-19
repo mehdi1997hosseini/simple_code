@@ -34,7 +34,7 @@ public class ExternalOrganizationServiceImpl extends BasicServiceImpl<ExternalOr
 
     @Override
     public List<ExternalOrganizationEntity> findAllInCache() {
-        return repository.findAll();
+        return repository.findAll().stream().filter(entity -> !entity.getIsDeleted()).toList();
     }
 
     @Override

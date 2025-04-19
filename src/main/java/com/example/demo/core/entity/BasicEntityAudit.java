@@ -37,13 +37,10 @@ public abstract class BasicEntityAudit<ID> extends BasicEntity<ID> implements Se
     @Column(name = "deleted_at")
     private Date deletedAt;
 
-    @Column(nullable = false, name = "is_deleted")
-    private Boolean isDeleted = false;
-
     @PreUpdate
     @PrePersist
     public void beforeAnyUpdate() {
-        if (isDeleted != null && isDeleted) {
+        if (getIsDeleted() != null && getIsDeleted()) {
 
             if (deletedBy == null) {
                 // TODO:: complete later with security
@@ -79,7 +76,6 @@ public abstract class BasicEntityAudit<ID> extends BasicEntity<ID> implements Se
                 ", updatedBy='" + updatedBy +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", isDeleted=" + isDeleted +
                 "}" +
                 super.toString();
     }
