@@ -26,7 +26,7 @@ public class ExternalOrganizationServiceImpl extends BasicServiceImpl<ExternalOr
 
     @Override
     public List<ExternalOrganizationDto> findAll() {
-        List<ExternalOrganizationEntity> allExtOrg = repository.findAll();
+        List<ExternalOrganizationEntity> allExtOrg = findAllInCache();
         if (!allExtOrg.isEmpty()) return null;
 
         return mapper.toDto(allExtOrg);

@@ -73,7 +73,7 @@ public class TokenSchedulerService {
                 token.setCountTry(token.getCountTry() + 1);
                 scheduler.schedule(() -> scheduleRefresh(extOrgName, org), 24, TimeUnit.HOURS);
             } else {
-                token.setValidToken(false);
+                token.setIsValidToken(false);
                 token.setCountTry(token.getCountTry() + 1);
                 ScheduledFuture<?> remove = scheduledTasks.remove(extOrgName);
                 if (remove != null) {
@@ -85,10 +85,11 @@ public class TokenSchedulerService {
     }
 
     public void resetTokenManually(ExternalOrganizationName extOrgName, ExternalOrganizationEntity extOrgEntity) {
+        // بررسی شود که تاریخ انقضا توکن آن گذشته باشد. چون نباید توکن آن معتبر باشد.
         ExternalTokenDto token = tokenCacheService.getToken(extOrgName);
         if (token != null) {
             token.setCountTry(0);
-            token.setValidToken(true);
+            token.setIsValidToken(true);
             tokenCacheService.saveOrUpdateToken(extOrgName, token);
             scheduleRefresh(extOrgName, extOrgEntity);
 //            System.out.println("توکن برای " + extOrgName + " ریست شد و برنامه‌ریزی مجدد انجام شد.");

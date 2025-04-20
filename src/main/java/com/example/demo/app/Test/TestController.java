@@ -1,6 +1,7 @@
 package com.example.demo.app.Test;
 
 import com.example.demo.core.controller.BasicController;
+import com.example.demo.core.thirdParty.externalOrganization.token.cache.TokenCacheService;
 import com.example.demo.core.utility.validation.nin.NIN;
 import com.example.demo.core.utility.validation.nin.NIN_TypeVld;
 import org.springframework.http.HttpStatus;
@@ -13,9 +14,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("test/")
 public class TestController extends BasicController<TestEntity,Long,TestService> {
-
-    public TestController(TestService service) {
+    private final TokenCacheService tokenCacheService;
+    public TestController(TestService service, TokenCacheService tokenCacheService) {
         super(service);
+        this.tokenCacheService = tokenCacheService;
     }
 
     @PostMapping("save")
@@ -41,6 +43,12 @@ public class TestController extends BasicController<TestEntity,Long,TestService>
         response.put("expires_in",2);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
+
+    @GetMapping("getAllTokenTest")
+    public ResponseEntity<?> getAllTokenTest() {
+        return new ResponseEntity<>(tokenCacheService.getAll(), HttpStatus.OK);
+    }
+
 
 
 }

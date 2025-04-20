@@ -1,9 +1,6 @@
 package com.example.demo.core.thirdParty.externalOrganization.token;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -12,10 +9,11 @@ import java.time.Instant;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ExternalTokenDto implements Serializable {
     private String token;
     private Instant expiresAt;
-    private boolean isValidToken;
-    private int countTry = 0;
+    private Boolean isValidToken;
+    private Integer countTry = 0;
 
 }

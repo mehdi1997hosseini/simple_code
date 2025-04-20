@@ -6,6 +6,8 @@ public enum BasicAppExceptionType implements BasicSpecificationException {
     ENTERED_VALUE_IS_NOT_VALID("Error.valueIsNotValid", "402"),
     AUTHENTICATION("error.authentication", "403"),
     PAGE_NOT_FOUND("error.pageNotFound", "404"),
+    INTERNAL_SERVER_ERROR("error.internalServerError","500"),
+    NO_RESOURCE_FOUND("error.noResourceFound", "404"),
 
     FILE_NOT_FOUND_BY_FILE_NAME("error.fileNotFoundByFileName", "404") ,
 

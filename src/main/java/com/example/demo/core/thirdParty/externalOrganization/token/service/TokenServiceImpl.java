@@ -49,22 +49,32 @@ public class TokenServiceImpl implements TokenService {
                             Instant.parse(expiresAtStr), 50);
                 }
 
-                // اگر اطلاعات ناقص بود، هیچ توکنی برنگردون
+                // اگر اطلاعات ناقص بود، هیچ توکنی برنگردونه
                 if (token == null || expiresAt == null) {
+//                    جایگزین باید شود با لاگ
 //                    throw new IllegalStateException("Token یا Expiry زمان معتبر نیست.");
-                    return null;
+                    return ExternalTokenDto.builder()
+                            .token(null)
+                            .expiresAt(null)
+                            .isValidToken(false).build();
                 }
 
                 return new ExternalTokenDto(token, expiresAt, true, 0);
             } else {
+//                    جایگزین باید شود با لاگ
 //                throw new IllegalStateException("پاسخ نامعتبر از سرور دریافت شد.");
-                return null;
+                return ExternalTokenDto.builder()
+                        .token(null)
+                        .expiresAt(null)
+                        .isValidToken(false).build();
             }
         } catch (Exception ex) {
-            // لاگ کن که بتونی بررسی کنی
+//                    جایگزین باید شود با لاگ
 //            ex.printStackTrace();
 //            throw new RuntimeException("خطا در دریافت توکن از سرور مقصد: " + extOrgEntity.getOrgName(), ex);
-            return null;
+            return ExternalTokenDto.builder().token(null)
+                    .expiresAt(null)
+                    .isValidToken(false).build();
         }
     }
 

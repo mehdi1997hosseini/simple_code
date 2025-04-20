@@ -3,6 +3,7 @@ package com.example.demo.core.exceptionHandler;
 import com.example.demo.core.config.RequestLanguageContext;
 import com.example.demo.core.exceptionHandler.exception.AppRunTimeException;
 import com.example.demo.core.exceptionHandler.exception.AppSqlException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.sql.SQLException;
 import java.util.Locale;
@@ -69,8 +72,37 @@ public class BasicGlobalExceptionHandler {
         AppSqlException appSqlException = AppSqlException.doJob(ex);
         String message = dynamicMessageSource.convertMessageByDigits(appSqlException.getError().getMessage(), lang(null), appSqlException.getDigits());
         BasicResponseException responseException = new BasicResponseException(message, appSqlException.getError().getErrorCode(), appSqlException.getDetail());
-        return buildResponse(responseException,appSqlException.getHttpStatus());
+        return buildResponse(responseException, appSqlException.getHttpStatus());
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleGenericException(Exception ex, HttpServletRequest request) {
+        BasicAppExceptionType internalServerError = BasicAppExceptionType.INTERNAL_SERVER_ERROR;
+        String message = dynamicMessageSource.convertMessageByDigits(internalServerError.getMessage(), lang(null), (Object) null);
+
+        BasicResponseException responseException = new BasicResponseException(message, internalServerError.getErrorCode(), ex.getMessage(), request.getRequestURI());
+        return buildResponse(responseException, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<?> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpServletRequest request) {
+
+        BasicAppExceptionType pageNotFound = BasicAppExceptionType.PAGE_NOT_FOUND;
+        String message = dynamicMessageSource.convertMessageByDigits(pageNotFound.getMessage(), lang(null), (Object) null);
+        BasicResponseException responseException = new BasicResponseException(message, pageNotFound.getErrorCode(), ex.getMessage(), request.getRequestURI());
+
+        return buildResponse(responseException, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<?> handleNoResource(NoResourceFoundException ex, HttpServletRequest request) {
+        BasicAppExceptionType pageNotFound = BasicAppExceptionType.NO_RESOURCE_FOUND;
+        String message = dynamicMessageSource.convertMessageByDigits(pageNotFound.getMessage(), lang(null), (Object) null);
+        BasicResponseException responseException = new BasicResponseException(message, pageNotFound.getErrorCode(), ex.getMessage(), request.getRequestURI());
+
+        return buildResponse(responseException, HttpStatus.NOT_FOUND);
+    }
+
 
     private ResponseEntity<Object> buildResponse(BasicResponseException responseException, HttpStatus status) {
         return new ResponseEntity<>(responseException, status);

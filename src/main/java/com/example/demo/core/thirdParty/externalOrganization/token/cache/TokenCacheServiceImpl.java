@@ -5,6 +5,7 @@ import com.example.demo.core.thirdParty.externalOrganization.token.ExternalToken
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -15,12 +16,26 @@ public class TokenCacheServiceImpl implements TokenCacheService {
     public void saveOrUpdateToken(ExternalOrganizationName orgName, ExternalTokenDto tokenInfo) {
         // update new token for organization name
         if (tokenMap.containsKey(orgName)) {
-            ExternalTokenDto updatedTokenInfo = new ExternalTokenDto(tokenInfo.getToken(),tokenInfo.getExpiresAt());
-            tokenMap.replace(orgName, updatedTokenInfo);
+            ExternalTokenDto tokenDto = tokenMap.get(orgName);
+            if (tokenInfo.getCountTry() != null && tokenInfo.getCountTry() != 0)
+                tokenDto.setCountTry(tokenInfo.getCountTry());
+
+            if (tokenDto.getIsValidToken() && !tokenInfo.getIsValidToken() && tokenInfo.getCountTry() > 3) {
+                tokenDto.setIsValidToken(false);
+                tokenDto.setToken(tokenInfo.getToken());
+                tokenDto.setExpiresAt(tokenInfo.getExpiresAt());
+            } else if (!tokenDto.getIsValidToken() && tokenInfo.getIsValidToken()) {
+                tokenDto.setIsValidToken(true);
+                tokenDto.setToken(tokenInfo.getToken());
+                tokenDto.setExpiresAt(tokenInfo.getExpiresAt());
+                tokenDto.setCountTry(tokenInfo.getCountTry());
+            }
+
+            tokenMap.replace(orgName, tokenDto);
         }
         // add new token for organization name
         else {
-            ExternalTokenDto newTokenInfo = new ExternalTokenDto(tokenInfo.getToken(), tokenInfo.getExpiresAt());
+            ExternalTokenDto newTokenInfo = new ExternalTokenDto(tokenInfo.getToken(), tokenInfo.getExpiresAt(), tokenInfo.getIsValidToken(), tokenInfo.getCountTry()==null ? 0 : tokenInfo.getCountTry());
             tokenMap.put(orgName, newTokenInfo);
         }
     }
@@ -28,7 +43,7 @@ public class TokenCacheServiceImpl implements TokenCacheService {
     public ExternalTokenDto getToken(ExternalOrganizationName orgName) {
         if (tokenMap.isEmpty())
             return null;
-        if (tokenMap.containsKey(orgName)){
+        if (tokenMap.containsKey(orgName)) {
             return tokenMap.get(orgName);
         }
         return null;
@@ -36,6 +51,11 @@ public class TokenCacheServiceImpl implements TokenCacheService {
 
     public void clearDataTokens() {
         tokenMap.clear();
+    }
+
+    @Override
+    public Map<ExternalOrganizationName, ExternalTokenDto> getAll() {
+        return tokenMap;
     }
 
 

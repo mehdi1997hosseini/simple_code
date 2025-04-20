@@ -1,9 +1,5 @@
 package com.example.demo.core.utility;
 
-import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizationName;
-
-import java.util.concurrent.TimeUnit;
-
 public enum TimeUnitType {
     NANOSECONDS,
     MICROSECONDS,
