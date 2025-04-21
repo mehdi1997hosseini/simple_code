@@ -51,6 +51,7 @@ public class DateTimeZoneUtil {
                 case SECONDS -> Duration.ofSeconds(expiresIn);
                 case MINUTES -> Duration.ofMinutes(expiresIn);
                 case HOURS -> Duration.ofHours(expiresIn);
+                case DAYS -> Duration.ofDays(expiresIn);
                 default -> throw new IllegalArgumentException("Unsupported TimeUnit: " + timeUnit);
             };
         }
