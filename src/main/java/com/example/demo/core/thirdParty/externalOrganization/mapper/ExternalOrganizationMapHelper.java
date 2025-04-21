@@ -13,8 +13,7 @@ public class ExternalOrganizationMapHelper {
 
     @Named("stringToExternalOrganizationName")
     public static ExternalOrganizationName stringToExternalOrganizationName(String value) {
-
-        return ExternalOrganizationName.fromString(value);
+        return value != null ? ExternalOrganizationName.fromString(value) : null;
     }
 
     @Named("externalOrganizationNameToString")
@@ -24,7 +23,7 @@ public class ExternalOrganizationMapHelper {
 
     @Named("stringToTokenType")
     public static TokenType stringToTokenType(String value) {
-        return TokenType.fromString(value);
+        return value != null ? TokenType.fromString(value) : null;
     }
 
     @Named("tokenTypeToString")
@@ -34,7 +33,7 @@ public class ExternalOrganizationMapHelper {
 
     @Named("stringToTimeUnitType")
     public static TimeUnitType stringToTimeUnitType(String value) {
-        return TimeUnitType.fromString(value);
+        return value != null ? TimeUnitType.fromString(value) : null;
     }
 
     @Named("timeUnitTypeToString")

@@ -6,7 +6,7 @@ import com.example.demo.core.thirdParty.externalOrganization.token.ExternalToken
 import java.util.Map;
 
 public interface TokenCacheService {
-    public void saveOrUpdateToken(ExternalOrganizationName orgId, ExternalTokenDto tokenInfo);
+    public void saveOrUpdateToken(ExternalOrganizationName orgName, ExternalTokenDto tokenInfo);
     public ExternalTokenDto getToken(ExternalOrganizationName orgName);
     public void clearDataTokens();
     public Map<ExternalOrganizationName, ExternalTokenDto> getAll();

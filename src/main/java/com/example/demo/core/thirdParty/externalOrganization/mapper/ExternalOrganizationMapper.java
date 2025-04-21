@@ -3,9 +3,7 @@ package com.example.demo.core.thirdParty.externalOrganization.mapper;
 import com.example.demo.core.mapper.BasicMapper;
 import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizationEntity;
 import com.example.demo.core.thirdParty.externalOrganization.dto.ExternalOrganizationDto;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", uses = {ExternalOrganizationMapHelper.class})
 public interface ExternalOrganizationMapper extends BasicMapper<ExternalOrganizationEntity, ExternalOrganizationDto> {
@@ -25,5 +23,8 @@ public interface ExternalOrganizationMapper extends BasicMapper<ExternalOrganiza
     })
     ExternalOrganizationDto toDto(ExternalOrganizationEntity externalOrganizationEntity);
 
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateFromDto(ExternalOrganizationDto dto, @MappingTarget ExternalOrganizationEntity entity);
 
 }

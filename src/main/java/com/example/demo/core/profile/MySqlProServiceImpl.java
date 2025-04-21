@@ -1,6 +1,7 @@
 package com.example.demo.core.profile;
 
-import com.example.demo.core.thirdParty.externalOrganization.cache.ExternalOrganizationCacheService;
+import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizationService;
+import com.example.demo.core.thirdParty.externalOrganization.cache.ExternalOrganizationCatchService;
 import com.example.demo.core.thirdParty.externalOrganization.token.TokenSchedulerService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,8 @@ import java.util.Optional;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class MySqlProServiceImpl implements ProfilesService, CommandLineRunner {
 
-    private final ExternalOrganizationCacheService externalOrgCacheService;
+    private final ExternalOrganizationService externalOrganizationService;
+    private final ExternalOrganizationCatchService externalOrganizationCatchService;
     private final TokenSchedulerService tokenSchedulerService;
 
 
@@ -30,8 +32,8 @@ public class MySqlProServiceImpl implements ProfilesService, CommandLineRunner {
     }
 
     private void tokenProcess() {
-        externalOrgCacheService.refreshAllExternalOrganization();
-        Optional.ofNullable(externalOrgCacheService.getAllExternalOrganization())
+        externalOrganizationCatchService.refreshAllCatch(externalOrganizationService.findAllInCache());
+        Optional.ofNullable(externalOrganizationCatchService.findAllExternalOrganization())
                 .filter(map -> !map.isEmpty())
                 .ifPresent(tokenSchedulerService::initTokens);
     }

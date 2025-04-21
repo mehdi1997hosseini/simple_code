@@ -3,15 +3,13 @@ package com.example.demo.core.thirdParty.externalOrganization.token;
 import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizationEntity;
 import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizationName;
 import com.example.demo.core.thirdParty.externalOrganization.token.cache.TokenCacheService;
-import com.example.demo.core.thirdParty.externalOrganization.token.cache.TokenCacheServiceImpl;
 import com.example.demo.core.thirdParty.externalOrganization.token.service.TokenService;
 import com.example.demo.core.thirdParty.externalOrganization.token.service.TokenServiceImpl;
 import com.example.demo.core.utility.DateTimeZoneUtil;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -25,7 +23,7 @@ public class TokenSchedulerService {
     private final TokenCacheService tokenCacheService;
     private final TokenService tokenService;
 
-    public TokenSchedulerService(TokenCacheServiceImpl tokenCacheService, TokenServiceImpl tokenService) {
+    public TokenSchedulerService(TokenCacheService tokenCacheService, TokenServiceImpl tokenService) {
         this.tokenCacheService = tokenCacheService;
         this.tokenService = tokenService;
     }
@@ -37,6 +35,7 @@ public class TokenSchedulerService {
     private void scheduleRefresh(ExternalOrganizationName extOrgName, ExternalOrganizationEntity extOrgEntity) {
         try {
             ExternalTokenDto token = tokenService.fetchTokenByRest(extOrgEntity);
+            System.out.println("2. token in time " + LocalTime.now() + " , token: " + token.getToken());
             tokenCacheService.saveOrUpdateToken(extOrgName, token);
 
             Duration durationFromExpiresIn = DateTimeZoneUtil.DurationAndInstantUtils.toDurationFromInstant(token.getExpiresAt());
@@ -46,7 +45,7 @@ public class TokenSchedulerService {
             scheduledTasks.put(extOrgName, future);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            System.out.println("2. Error while scheduling refresh token: " + ex.getMessage());
             // اگر سرور مقصد از دسترس خارج بود
             retryLater(extOrgName, extOrgEntity);
         }
@@ -54,11 +53,12 @@ public class TokenSchedulerService {
 
     private void refreshToken(ExternalOrganizationName extOrgName, ExternalOrganizationEntity org) {
         try {
+            System.out.println("1. org in time " + LocalTime.now() + " , orgName " + extOrgName);
             ExternalTokenDto newToken = tokenService.fetchTokenByRest(org);
             tokenCacheService.saveOrUpdateToken(org.getOrgName(), newToken);
             scheduleRefresh(extOrgName, org); // بازتنظیم برنامه‌ریزی برای زمان بعدی
         } catch (Exception ex) {
-            ex.printStackTrace();
+            System.out.println("1. Refresh token failed === " + ex.getMessage());
             retryLater(extOrgName, org); // اگر نشد، دوباره بعداً امتحان کن
         }
     }
@@ -93,10 +93,10 @@ public class TokenSchedulerService {
             tokenCacheService.saveOrUpdateToken(extOrgName, token);
             scheduleRefresh(extOrgName, extOrgEntity);
 //            System.out.println("توکن برای " + extOrgName + " ریست شد و برنامه‌ریزی مجدد انجام شد.");
-        }
-//        else {
+        } else {
+            scheduleRefresh(extOrgName, extOrgEntity);
 //            System.out.println("توکنی برای " + extOrgName + " وجود ندارد.");
-//        }
+        }
     }
 
 //    public void scheduleTokenRefreshForRest(ExternalOrganizationName extOrgName, ExternalOrganizationEntity extOrgEntity) {

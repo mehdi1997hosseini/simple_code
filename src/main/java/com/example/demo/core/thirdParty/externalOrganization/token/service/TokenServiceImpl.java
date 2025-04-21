@@ -70,7 +70,7 @@ public class TokenServiceImpl implements TokenService {
             }
         } catch (Exception ex) {
 //                    جایگزین باید شود با لاگ
-//            ex.printStackTrace();
+            System.out.println("3. fetch token failed = " + ex.getMessage());
 //            throw new RuntimeException("خطا در دریافت توکن از سرور مقصد: " + extOrgEntity.getOrgName(), ex);
             return ExternalTokenDto.builder().token(null)
                     .expiresAt(null)

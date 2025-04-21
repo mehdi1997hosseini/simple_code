@@ -5,7 +5,6 @@ import com.example.demo.core.thirdParty.externalOrganization.token.ExternalToken
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -29,13 +28,18 @@ public class TokenCacheServiceImpl implements TokenCacheService {
                 tokenDto.setToken(tokenInfo.getToken());
                 tokenDto.setExpiresAt(tokenInfo.getExpiresAt());
                 tokenDto.setCountTry(tokenInfo.getCountTry());
+            } else if (tokenInfo.getIsValidToken() && tokenInfo.getToken() != null && tokenInfo.getExpiresAt() != null) {
+                tokenDto.setIsValidToken(true);
+                tokenDto.setToken(tokenInfo.getToken());
+                tokenDto.setExpiresAt(tokenInfo.getExpiresAt());
+                tokenDto.setCountTry(tokenInfo.getCountTry());
             }
 
             tokenMap.replace(orgName, tokenDto);
         }
         // add new token for organization name
         else {
-            ExternalTokenDto newTokenInfo = new ExternalTokenDto(tokenInfo.getToken(), tokenInfo.getExpiresAt(), tokenInfo.getIsValidToken(), tokenInfo.getCountTry()==null ? 0 : tokenInfo.getCountTry());
+            ExternalTokenDto newTokenInfo = new ExternalTokenDto(tokenInfo.getToken(), tokenInfo.getExpiresAt(), tokenInfo.getIsValidToken(), tokenInfo.getCountTry() == null ? 0 : tokenInfo.getCountTry());
             tokenMap.put(orgName, newTokenInfo);
         }
     }

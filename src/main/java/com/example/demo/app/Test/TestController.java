@@ -8,13 +8,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("test/")
-public class TestController extends BasicController<TestEntity,Long,TestService> {
+public class TestController extends BasicController<TestEntity, Long, TestService> {
     private final TokenCacheService tokenCacheService;
+
     public TestController(TestService service, TokenCacheService tokenCacheService) {
         super(service);
         this.tokenCacheService = tokenCacheService;
@@ -37,18 +39,17 @@ public class TestController extends BasicController<TestEntity,Long,TestService>
     }
 
     @PostMapping("getTokenTest")
-    public ResponseEntity<Map<String,Object>> getTokenTest(@RequestBody TokenRequestTest body) {
-        Map<String,Object> response = new HashMap<>();
-        response.put("access_token","mehdiHosseini");
-        response.put("expires_in",2);
-        return new ResponseEntity<>(response,HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> getTokenTest(@RequestBody TokenRequestTest body) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("access_token", body.getClient_id()+"+++" + LocalTime.now().toString() + "+++"+ body.getUsername() + "123456" + body.getPassword());
+        response.put("expires_in", 2);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("getAllTokenTest")
     public ResponseEntity<?> getAllTokenTest() {
         return new ResponseEntity<>(tokenCacheService.getAll(), HttpStatus.OK);
     }
-
 
 
 }

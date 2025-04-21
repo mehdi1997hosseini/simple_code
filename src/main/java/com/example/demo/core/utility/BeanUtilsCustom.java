@@ -1,6 +1,7 @@
 package com.example.demo.core.utility;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 public class BeanUtilsCustom {
     private BeanUtilsCustom() {
@@ -23,6 +24,54 @@ public class BeanUtilsCustom {
                 }
             }
             sourceClass = sourceClass.getSuperclass();
+        }
+    }
+
+    public static <S, T> void updateEntityDynamically(S source, T target) {
+        if (source == null || target == null) {
+            return;
+        }
+
+        Field[] sourceFields = source.getClass().getDeclaredFields();
+
+        for (Field sourceField : sourceFields) {
+            sourceField.setAccessible(true);
+
+            try {
+                Object sourceValue = sourceField.get(source);
+                if (sourceValue == null) {
+                    continue; // مقدار null نادیده گرفته می‌شود
+                }
+
+                String fieldName = sourceField.getName();
+
+                try {
+                    Field targetField = target.getClass().getDeclaredField(fieldName);
+                    targetField.setAccessible(true);
+
+                    Class<?> targetType = targetField.getType();
+
+                    // پشتیبانی از Enum
+                    if (targetType.isEnum() && sourceValue instanceof String strValue) {
+                        Object enumValue = Arrays.stream(targetType.getEnumConstants())
+                                .filter(e -> ((Enum<?>) e).name().equalsIgnoreCase(strValue))
+                                .findFirst()
+                                .orElseThrow(() ->
+                                        new IllegalArgumentException("Invalid enum value for field: " + fieldName));
+
+                        targetField.set(target, enumValue);
+                    }
+                    // اگر نوع یکسان بود یا قابل انتساب بود
+                    else if (targetType.isAssignableFrom(sourceValue.getClass())) {
+                        targetField.set(target, sourceValue);
+                    }
+
+                } catch (NoSuchFieldException e) {
+
+                }
+
+            } catch (IllegalAccessException e) {
+            }
         }
     }
 
