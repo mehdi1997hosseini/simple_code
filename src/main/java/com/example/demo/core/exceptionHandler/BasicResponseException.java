@@ -15,6 +15,7 @@ public class BasicResponseException {
     private String code;
     private String detailMessage;
     private LocalDateTime localDateTime;
+    private String instanceURI;
 
     private BasicResponseException() {
         this.localDateTime = LocalDateTime.now();
@@ -31,5 +32,12 @@ public class BasicResponseException {
         this.message = message;
         this.code = code;
         this.detailMessage = detailMessage;
+    }
+    public BasicResponseException(String message, String code, String detailMessage,String instanceURI) {
+        this();
+        this.message = message;
+        this.code = code;
+        this.detailMessage = detailMessage;
+        this.instanceURI = instanceURI;
     }
 }

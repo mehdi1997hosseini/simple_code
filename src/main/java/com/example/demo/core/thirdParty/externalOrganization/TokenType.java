@@ -31,6 +31,9 @@ public enum TokenType {
 
     // Method to get token type from string (if needed for dynamic configuration)
     public static TokenType fromString(String type) {
+        if (type == null)
+            throw new IllegalArgumentException("Token type is Null : ");
+
         for (TokenType tokenType : TokenType.values()) {
             if (tokenType.getType().equalsIgnoreCase(type)) {
                 return tokenType;

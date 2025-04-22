@@ -4,6 +4,7 @@ package com.example.demo.core.thirdParty.externalOrganization.mapper;
 import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizationEntity;
 import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizationName;
 import com.example.demo.core.thirdParty.externalOrganization.TokenType;
+import com.example.demo.core.utility.TimeUnitType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 
@@ -12,8 +13,7 @@ public class ExternalOrganizationMapHelper {
 
     @Named("stringToExternalOrganizationName")
     public static ExternalOrganizationName stringToExternalOrganizationName(String value) {
-
-        return ExternalOrganizationName.fromString(value);
+        return value != null ? ExternalOrganizationName.fromString(value) : null;
     }
 
     @Named("externalOrganizationNameToString")
@@ -23,11 +23,21 @@ public class ExternalOrganizationMapHelper {
 
     @Named("stringToTokenType")
     public static TokenType stringToTokenType(String value) {
-        return TokenType.fromString(value);
+        return value != null ? TokenType.fromString(value) : null;
     }
 
     @Named("tokenTypeToString")
     public static String tokenTypeToString(TokenType value) {
+        return value == null ? null : value.name();
+    }
+
+    @Named("stringToTimeUnitType")
+    public static TimeUnitType stringToTimeUnitType(String value) {
+        return value != null ? TimeUnitType.fromString(value) : null;
+    }
+
+    @Named("timeUnitTypeToString")
+    public static String timeUnitTypeToString(TimeUnitType value) {
         return value == null ? null : value.name();
     }
 

@@ -3,6 +3,7 @@ package com.example.demo.core.thirdParty.externalOrganization.token.service;
 import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizationEntity;
 import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizationName;
 import com.example.demo.core.thirdParty.externalOrganization.token.ExternalTokenDto;
+import com.example.demo.core.utility.DateTimeZoneUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,22 +21,61 @@ public class TokenServiceImpl implements TokenService {
     }
 
     public ExternalTokenDto fetchTokenByRest(ExternalOrganizationEntity extOrgEntity) {
-        Map<String, String> body = new HashMap<>();
-        body.put("client_id", extOrgEntity.getClientId());
-        body.put("client_secret", extOrgEntity.getClientSecret());
-        body.put("username", extOrgEntity.getUsername());
-        body.put("password", extOrgEntity.getPassword());
-        body.put("grant_type", "password");
+        try {
+            Map<String, String> body = new HashMap<>();
+            body.put("client_id", extOrgEntity.getClientId());
+            body.put("client_secret", extOrgEntity.getClientSecret());
+            body.put("username", extOrgEntity.getUsername());
+            body.put("password", extOrgEntity.getPassword());
+            body.put("grant_type", "password");
 
-        ResponseEntity<Map> response = restTemplate.postForEntity(
-                extOrgEntity.getAuthUrl(), body, Map.class);
+            ResponseEntity<Map> response = restTemplate.postForEntity(
+                    extOrgEntity.getAuthUrl(), body, Map.class);
 
-        String token = (String) response.getBody().get("access_token");
-        Integer expiresIn = (Integer) response.getBody().get("expires_in");
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                String token = (String) response.getBody().get("access_token");
+                Object expiresInRes = response.getBody().get("expires_in");
+                Object expiresAtRes = response.getBody().get("expires_at");
 
-        Instant expiresAt = Instant.now().plusMillis(expiresIn - 60000);
+                Instant expiresAt = null;
 
-        return new ExternalTokenDto(token, expiresAt);
+                if (expiresInRes != null) {
+                    Integer expiresIn = (Integer) expiresInRes;
+                    expiresAt = DateTimeZoneUtil.DurationAndInstantUtils.calculateExpiry(
+                            expiresIn, extOrgEntity.getTimeUnitType(), 50);
+                } else if (expiresAtRes != null) {
+                    String expiresAtStr = (String) expiresAtRes;
+                    expiresAt = DateTimeZoneUtil.DurationAndInstantUtils.calculateExpiry(
+                            Instant.parse(expiresAtStr), 50);
+                }
+
+                // اگر اطلاعات ناقص بود، هیچ توکنی برنگردونه
+                if (token == null || expiresAt == null) {
+//                    جایگزین باید شود با لاگ
+//                    throw new IllegalStateException("Token یا Expiry زمان معتبر نیست.");
+                    return ExternalTokenDto.builder()
+                            .token(null)
+                            .expiresAt(null)
+                            .isValidToken(false).build();
+                }
+
+                return new ExternalTokenDto(token, expiresAt, true, 0);
+            } else {
+//                    جایگزین باید شود با لاگ
+//                throw new IllegalStateException("پاسخ نامعتبر از سرور دریافت شد.");
+                return ExternalTokenDto.builder()
+                        .token(null)
+                        .expiresAt(null)
+                        .isValidToken(false).build();
+            }
+        } catch (Exception ex) {
+//                    جایگزین باید شود با لاگ
+            System.out.println("3. fetch token failed = " + ex.getMessage());
+//            throw new RuntimeException("خطا در دریافت توکن از سرور مقصد: " + extOrgEntity.getOrgName(), ex);
+            return ExternalTokenDto.builder().token(null)
+                    .expiresAt(null)
+                    .isValidToken(false).build();
+        }
     }
 
     public ExternalTokenDto fetchTokenBySoap(ExternalOrganizationEntity extOrgEntity) {
@@ -58,7 +98,7 @@ public class TokenServiceImpl implements TokenService {
 
         Instant expiresAt = Instant.now().plusSeconds(expiresIn - 30); // 60s buffer
 
-        return new ExternalTokenDto(token, expiresAt);
+        return new ExternalTokenDto(token, expiresAt, true, 0);
     }
 
     public ExternalTokenDto getToken(ExternalOrganizationName extOrgName) {

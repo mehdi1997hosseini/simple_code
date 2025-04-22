@@ -15,6 +15,8 @@ import java.util.UUID;
 public class BasicEntity<ID>  implements Serializable {
     @Id
     private ID id;
+    @Column(nullable = false, name = "is_deleted")
+    private Boolean isDeleted = false;
 
     @PrePersist
     private void generateIdIfNeeded() {

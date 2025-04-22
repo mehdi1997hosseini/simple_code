@@ -1,6 +1,7 @@
 package com.example.demo.core.thirdParty.externalOrganization;
 
 import com.example.demo.core.entity.BasicEntity;
+import com.example.demo.core.utility.TimeUnitType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,9 @@ public class ExternalOrganizationEntity extends BasicEntity<String> {
     private TokenType tokenType;      // نوع توکن (مثل Bearer یا JWT)
     private String username;
     private String password;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TIME_UNIT_TYPE", nullable = false)
+    private TimeUnitType timeUnitType;
 
 //    @Enumerated(EnumType.STRING)
 //    private GrantType grantType;
