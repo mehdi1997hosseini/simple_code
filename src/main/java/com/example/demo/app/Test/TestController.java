@@ -1,6 +1,7 @@
 package com.example.demo.app.Test;
 
 import com.example.demo.core.controller.BasicController;
+import com.example.demo.core.logger.annotation.LoggableRequestResponseApi;
 import com.example.demo.core.thirdParty.externalOrganization.token.cache.TokenCacheService;
 import com.example.demo.core.utility.validation.nin.NIN;
 import com.example.demo.core.utility.validation.nin.NIN_TypeVld;
@@ -23,6 +24,7 @@ public class TestController extends BasicController<TestEntity, Long, TestServic
     }
 
     @PostMapping("save")
+    @LoggableRequestResponseApi
     public ResponseEntity<?> saveTest(@RequestBody TestEntity testEntity) {
         service.save(testEntity);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -47,6 +49,7 @@ public class TestController extends BasicController<TestEntity, Long, TestServic
     }
 
     @GetMapping("getAllTokenTest")
+    @LoggableRequestResponseApi
     public ResponseEntity<?> getAllTokenTest() {
         return new ResponseEntity<>(tokenCacheService.getAll(), HttpStatus.OK);
     }

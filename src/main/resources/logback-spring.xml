@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- 📦 تعریف الگوی کلی لاگ -->
+    <!-- 🧩 خواندن متغیرهای Spring Boot -->
+    <!-- از application.yml یا application.properties -->
+    <property name="LOG_PATTERN" value="%d{HH:mm:ss} | LEVEL: %-5level | CLASS: %logger{36} | %msg%n"/>
+    <springProperty scope="context" name="LOG_PATH" source="logging.file.path" defaultValue="./logs"/>
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="my-app"/>
+
+    <!-- 🖥 کنسول (مشترک برای همه پروفایل‌ها) -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- کنسول لاگر -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- فایل لاگر -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE_PATH}</file>
+        <!-- پالیسی زمان‌بندی + محدودیت سایز -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- نام فایل‌های آرشیوی با تاریخ و شماره -->
+            <fileNamePattern>${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+
+            <!-- شرط رولینگ: هم تاریخ و هم سایز -->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>300MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+
+            <!-- حداکثر نگهداری لاگ‌ها: 20 روز -->
+            <maxHistory>20</maxHistory>
+            <!-- حداکثر تعداد فایل‌های رول‌شده: 10 -->
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <springProfile name="mysql">
+        <!-- 🧩 خواندن متغیرهای Spring Boot -->
+        <springProperty scope="context" name="PROFILE_NAME" defaultValue="mysql"/>
+        <root level="info">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </root>
+    </springProfile>
+
+
+</configuration>
