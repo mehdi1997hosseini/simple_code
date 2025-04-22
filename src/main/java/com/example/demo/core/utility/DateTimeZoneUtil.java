@@ -89,6 +89,7 @@ public class DateTimeZoneUtil {
                 case SECONDS -> Instant.ofEpochSecond(value);
                 case MINUTES -> Instant.ofEpochSecond(value * 60);
                 case HOURS -> Instant.ofEpochSecond(value * 3600);
+                case DAYS -> Instant.ofEpochSecond((value * 3600)*24);
                 default -> throw new IllegalArgumentException("Unsupported time unit: " + unit);
             };
         }
@@ -101,6 +102,7 @@ public class DateTimeZoneUtil {
                 case SECONDS -> Duration.ofSeconds(value);
                 case MINUTES -> Duration.ofMinutes(value);
                 case HOURS -> Duration.ofHours(value);
+                case DAYS -> Duration.ofDays(value);
                 default -> throw new IllegalArgumentException("Unsupported time unit: " + unit);
             };
         }

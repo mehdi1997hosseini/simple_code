@@ -6,9 +6,13 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaUpdate;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Transactional
 public class BasicServiceImpl<E extends BasicEntity<ID>, ID, R extends BasicRepository<E, ID>> extends BaseEntityManager implements BasicService<E, ID> {
+    protected final Logger logger = LoggerFactory.getLogger(BasicServiceImpl.class);
+
     protected R repository;
     private Class<E> entityClass;
 
