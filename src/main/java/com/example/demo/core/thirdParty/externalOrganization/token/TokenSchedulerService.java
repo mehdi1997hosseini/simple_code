@@ -6,6 +6,7 @@ import com.example.demo.core.thirdParty.externalOrganization.token.cache.TokenCa
 import com.example.demo.core.thirdParty.externalOrganization.token.service.TokenService;
 import com.example.demo.core.thirdParty.externalOrganization.token.service.TokenServiceImpl;
 import com.example.demo.core.utility.DateTimeZoneUtil;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -34,7 +35,7 @@ public class TokenSchedulerService {
 
     private void scheduleRefresh(ExternalOrganizationName extOrgName, ExternalOrganizationEntity extOrgEntity) {
         try {
-            ExternalTokenDto token = tokenService.fetchTokenByRest(extOrgEntity);
+            ExternalTokenDto token = tokenService.fetchTokenByRest(extOrgEntity, HttpMethod.POST);
             System.out.println("2. token in time " + LocalTime.now() + " , token: " + token.getToken());
             tokenCacheService.saveOrUpdateToken(extOrgName, token);
 

@@ -48,7 +48,7 @@ public class TestController extends BasicController<TestEntity, Long, TestServic
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("getAllTokenTest")
+    @PostMapping("getAllTokenTest")
     @LoggableRequestResponseApi
     public ResponseEntity<?> getAllTokenTest() {
         return new ResponseEntity<>(tokenCacheService.getAll(), HttpStatus.OK);
