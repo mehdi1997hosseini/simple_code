@@ -11,7 +11,8 @@ public interface ExternalOrganizationMapper extends BasicMapper<ExternalOrganiza
     @Mappings({
             @Mapping(source = "orgName", target = "orgName", qualifiedByName = "stringToExternalOrganizationName"),
             @Mapping(source = "timeUnitType", target = "timeUnitType", qualifiedByName = "stringToTimeUnitType"),
-            @Mapping(source = "tokenType", target = "tokenType", qualifiedByName = "stringToTokenType")
+            @Mapping(source = "tokenType", target = "tokenType", qualifiedByName = "stringToTokenType"),
+            @Mapping(source = "authType", target = "authType", qualifiedByName = "stringToAuthType")
     })
     ExternalOrganizationEntity toEntity(ExternalOrganizationDto externalOrganizationDto);
 
@@ -19,7 +20,8 @@ public interface ExternalOrganizationMapper extends BasicMapper<ExternalOrganiza
     @Mappings({
             @Mapping(source = "orgName", target = "orgName", qualifiedByName = "externalOrganizationNameToString"),
             @Mapping(source = "timeUnitType", target = "timeUnitType", qualifiedByName = "timeUnitTypeToString"),
-            @Mapping(source = "tokenType", target = "tokenType", qualifiedByName = "tokenTypeToString")
+            @Mapping(source = "tokenType", target = "tokenType", qualifiedByName = "tokenTypeToString"),
+            @Mapping(source = "authType", target = "authType", qualifiedByName = "authTypeToString")
     })
     ExternalOrganizationDto toDto(ExternalOrganizationEntity externalOrganizationEntity);
 

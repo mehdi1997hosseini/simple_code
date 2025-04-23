@@ -1,6 +1,5 @@
 package com.example.demo.core.thirdParty.externalOrganization.dto;
 
-import com.example.demo.core.utility.TimeUnitType;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,12 +13,23 @@ import java.io.Serializable;
 public class ExternalOrganizationDto implements Serializable {
     @NotNull
     private String orgName;
-    private String authUrl;
+    @NotNull
+    private String authType;
+    @NotNull
+    private String tokenType;
+    @NotNull
+    private String authUri;
+    private String authCode;
     private String clientId;
     private String clientSecret;
-    private String tokenType;
     private String username;
     private String password;
+    private String apiKey;
+    private String staticToken;
+    private String redirectUri;
+    private String SamlRequestXml;
+
+    @NotNull
     private String timeUnitType;
 
 }

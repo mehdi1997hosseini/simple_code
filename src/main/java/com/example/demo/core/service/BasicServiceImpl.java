@@ -11,13 +11,13 @@ import org.slf4j.LoggerFactory;
 
 @Transactional
 public class BasicServiceImpl<E extends BasicEntity<ID>, ID, R extends BasicRepository<E, ID>> extends BaseEntityManager implements BasicService<E, ID> {
-    protected final Logger logger = LoggerFactory.getLogger(BasicServiceImpl.class);
-
+    protected Logger logger;
     protected R repository;
     private Class<E> entityClass;
 
     public BasicServiceImpl(R repository) {
         this.repository = repository;
+        this.logger = LoggerFactory.getLogger(this.getClass());
     }
 
     public BasicServiceImpl(R repository, Class<E> entityClass) {

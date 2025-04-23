@@ -1,5 +1,8 @@
 package com.example.demo.core.profile;
 
+import com.example.demo.core.exceptionHandler.BasicAppExceptionType;
+import com.example.demo.core.exceptionHandler.exception.AppRunTimeException;
+import com.example.demo.core.logger.annotation.LoggableRequestResponseApi;
 import com.example.demo.core.logger.httpRequestLog.HttpRequestLogService;
 import com.example.demo.core.logger.httpRequestLog.StatusRequestType;
 import com.example.demo.core.logger.httpRequestLog.dto.HttpRequestLogDto;
@@ -12,11 +15,12 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -54,48 +58,50 @@ public class MySqlProServiceImpl implements ProfilesService, CommandLineRunner, 
                 .ifPresent(tokenSchedulerService::initTokens);
     }
 
-    // نقطه‌برش برای متدهایی که انوتیشن @LoggableRequestResponseApi دارند
-    @Pointcut("@annotation(com.example.demo.core.logger.annotation.LoggableRequestResponseApi)")
-    public void loggableApiMethods() {}
-
     // Around advice برای لاگ‌گذاری همزمان درخواست و پاسخ
-    @Around("loggableApiMethods() && @annotation(org.springframework.web.bind.annotation.PostMapping)")
-    public Object logRequestResponse(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around("@annotation(loggableRequestResponseApi) && @annotation(org.springframework.web.bind.annotation.PostMapping)")
+    public Object logRequestResponse(ProceedingJoinPoint joinPoint, LoggableRequestResponseApi loggableRequestResponseApi) throws Throwable {
         // اطلاعات درخواست
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
 
-
-
-        // گرفتن پارامترهای درخواست
         Object[] args = joinPoint.getArgs();
-        // لاگ درخواست
+
         logger.info("Incoming request to method: {} with args: {}", joinPoint.getSignature(), args);
         HttpRequestLogDto httpRequestLog = HttpRequestLogDto.builder()
                 .url(requestURI)
                 .method(method)
-                .headers(request.getHeader("username")).build();
-        // پردازش متد و گرفتن نتیجه (پاسخ)
-        // پیشبرد متد
+                .build();
+//.headers(request.getHeader("username"))
         Object result = null;
         try {
+            Object responseBody;
+            Object headers;
             result = joinPoint.proceed();
-            httpRequestLog.setStatus(StatusRequestType.ACCEPT);
-            httpRequestLog.setResponseBody(result != null ? result.toString() : "");
-            // لاگ پاسخ
+            if (result instanceof ResponseEntity<?> response) {
+                responseBody = response.getBody();
+                headers = response.getHeaders();
+            } else if (result instanceof HttpEntity<?> httpEntity) {
+                responseBody = httpEntity.getBody();
+                headers = httpEntity.getHeaders();
+            } else {
+                responseBody = result;
+                headers = result;
+            }
+            httpRequestLog.setHeaders(headers.toString());
+            httpRequestLog.setResponseBody(responseBody != null ? responseBody.toString() : "");
             logger.info("Response from method: {}", result);
-
+            httpRequestLog.setStatus(StatusRequestType.ACCEPT);
         } catch (Exception e) {
-            // در صورت بروز خطا لاگ کنیم
-            logger.error("Error occurred while processing request: {} {}", method, requestURI, e);
+            logger.error("Error occurred while processing request: {} {}", method, requestURI);
             httpRequestLog.setStatus(StatusRequestType.FAILED);
-            throw new RuntimeException(e.getMessage());  // پرتاب مجدد استثنا برای مدیریت در جاهای دیگر
+            httpRequestLogService.saveOrUpdate(httpRequestLog);
+            throw new AppRunTimeException(BasicAppExceptionType.BAD_REQUEST, e.getMessage());
         }
-        // ذخیره‌سازی در دیتابیس
+
         httpRequestLogService.saveOrUpdate(httpRequestLog);
 
-        // بازگشت نتیجه به متد اصلی
         return result;
     }
 

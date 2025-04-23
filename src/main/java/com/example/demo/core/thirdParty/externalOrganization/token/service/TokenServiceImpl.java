@@ -4,17 +4,24 @@ import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizatio
 import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizationName;
 import com.example.demo.core.thirdParty.externalOrganization.token.ExternalTokenDto;
 import com.example.demo.core.utility.DateTimeZoneUtil;
-import org.springframework.http.ResponseEntity;
+import com.example.demo.core.utility.TimeUnitType;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
+@Slf4j
 @Service
 public class TokenServiceImpl implements TokenService {
     private final RestTemplate restTemplate;
+    private final String accessToken = "access_token";
+    private final String expiresIn = "expires_in";
+    private final String expiresAt = "expires_at";
 
     public TokenServiceImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -30,12 +37,12 @@ public class TokenServiceImpl implements TokenService {
             body.put("grant_type", "password");
 
             ResponseEntity<Map> response = restTemplate.postForEntity(
-                    extOrgEntity.getAuthUrl(), body, Map.class);
+                    extOrgEntity.getAuthUri(), body, Map.class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                String token = (String) response.getBody().get("access_token");
-                Object expiresInRes = response.getBody().get("expires_in");
-                Object expiresAtRes = response.getBody().get("expires_at");
+                String token = (String) response.getBody().get(accessToken);
+                Object expiresInRes = response.getBody().get(expiresIn);
+                Object expiresAtRes = response.getBody().get(expiresAt);
 
                 Instant expiresAt = null;
 
@@ -51,8 +58,7 @@ public class TokenServiceImpl implements TokenService {
 
                 // اگر اطلاعات ناقص بود، هیچ توکنی برنگردونه
                 if (token == null || expiresAt == null) {
-//                    جایگزین باید شود با لاگ
-//                    throw new IllegalStateException("Token یا Expiry زمان معتبر نیست.");
+                    log.error("Token یا Expiry زمان معتبر نیست.");
                     return ExternalTokenDto.builder()
                             .token(null)
                             .expiresAt(null)
@@ -61,55 +67,64 @@ public class TokenServiceImpl implements TokenService {
 
                 return new ExternalTokenDto(token, expiresAt, true, 0);
             } else {
-//                    جایگزین باید شود با لاگ
-//                throw new IllegalStateException("پاسخ نامعتبر از سرور دریافت شد.");
+                log.error("پاسخ نامعتبر از سرور دریافت شد");
                 return ExternalTokenDto.builder()
                         .token(null)
                         .expiresAt(null)
                         .isValidToken(false).build();
             }
         } catch (Exception ex) {
-//                    جایگزین باید شود با لاگ
-            System.out.println("3. fetch token failed = " + ex.getMessage());
-//            throw new RuntimeException("خطا در دریافت توکن از سرور مقصد: " + extOrgEntity.getOrgName(), ex);
+            log.error("خطا در دریافت توکن از سرور مقصد: {}", ex.getMessage());
             return ExternalTokenDto.builder().token(null)
                     .expiresAt(null)
                     .isValidToken(false).build();
         }
     }
 
-    public ExternalTokenDto fetchTokenBySoap(ExternalOrganizationEntity extOrgEntity) {
-        Map<String, String> body = new HashMap<>();
-        body.put("client_id", extOrgEntity.getClientId());
-        body.put("client_secret", extOrgEntity.getClientSecret());
-        body.put("username", extOrgEntity.getUsername());
-        body.put("password", extOrgEntity.getPassword());
-        body.put("grant_type", "password");
-
-        System.out.println(body.toString());
-
-        ResponseEntity<Map> response = restTemplate.postForEntity(
-                extOrgEntity.getAuthUrl(), body, Map.class);
-
-        System.out.println(response.toString());
-
-        String token = (String) response.getBody().get("access_token");
-        Integer expiresIn = (Integer) response.getBody().get("expires_in");
-
-        Instant expiresAt = Instant.now().plusSeconds(expiresIn - 30); // 60s buffer
-
-        return new ExternalTokenDto(token, expiresAt, true, 0);
+    @Override
+    public ExternalTokenDto fetchTokenByRest(ExternalOrganizationEntity extOrgEntity, HttpMethod method) {
+        HttpEntity<Map<String, String>> httpEntity = extOrgEntity.getAuthType().getHttpEntity(extOrgEntity);
+        ResponseEntity<Map> response = restTemplate.exchange(extOrgEntity.getAuthUri(), method, httpEntity, Map.class);
+        return parseResponse(response,extOrgEntity.getTimeUnitType());
     }
 
-    public ExternalTokenDto getToken(ExternalOrganizationName extOrgName) {
-//        ExternalTokenDto tokenDto = TokenCache.getToken(extOrgName);
-//
-//        if (tokenDto == null) {
-//
-//        }
-//
-//        return TokenCache.getToken(extOrgName);
-        return null;
+    public ExternalTokenDto fetchTokenBySoap(ExternalOrganizationEntity extOrgEntity) {
+        return new ExternalTokenDto(null, null, true, 0);
+    }
+
+    private ExternalTokenDto parseResponse(ResponseEntity<Map> response, TimeUnitType timeUnitType) {
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            String token = (String) response.getBody().get(accessToken);
+            Object expiresInRes = response.getBody().get(expiresIn);
+            Object expiresAtRes = response.getBody().get(expiresAt);
+
+            Instant expiresAt = null;
+
+            if (expiresInRes != null) {
+                expiresAt = DateTimeZoneUtil.DurationAndInstantUtils.calculateExpiry(
+                        (Integer) expiresInRes, timeUnitType, 50);
+            } else if (expiresAtRes != null) {
+                String expiresAtStr = (String) expiresAtRes;
+                expiresAt = DateTimeZoneUtil.DurationAndInstantUtils.calculateExpiry(
+                        Instant.parse(expiresAtStr), 50);
+            }
+
+            // اگر اطلاعات ناقص بود، هیچ توکنی برنگردونه
+            if (token == null || expiresAt == null) {
+                log.error("Token یا Expiry زمان معتبر نیست.");
+
+                return ExternalTokenDto.builder()
+                        .token(null)
+                        .expiresAt(null)
+                        .isValidToken(false).build();
+            }
+
+            log.info("GET TOKEN FROM SERVER - EXPIRE IN TIME : {} ", expiresAt);
+            return new ExternalTokenDto(token, expiresAt, true, 0);
+        }
+
+        log.error("Token یا Expiry زمان معتبر نیست.");
+        return ExternalTokenDto.builder().token(null).expiresAt(null).isValidToken(false).build();
     }
 
 
