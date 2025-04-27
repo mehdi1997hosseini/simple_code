@@ -10,9 +10,10 @@ class ClientCredentialsStrategy implements TokenStrategy {
     @Override
     public Map<String, String> prepareAuthParams(ExternalOrganizationEntity org) {
         Map<String, String> params = new HashMap<>();
-        params.put("client_id", org.getClientId());
-        params.put("client_secret", org.getClientSecret());
-        params.put("grant_type", "client_credentials");
+        params.put(org.getRequestTemplate().getClientIdParamName(), org.getRequestTokenConfig().getClientId());
+        params.put(org.getRequestTemplate().getClientSecretParamName(), org.getRequestTokenConfig().getClientSecret());
+        params.put(org.getRequestTemplate().getGrantTypeParamName(), "client_credentials");
         return params;
     }
+
 }

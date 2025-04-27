@@ -9,7 +9,7 @@ class APIKeyStrategy implements TokenStrategy {
     @Override
     public Map<String, String> prepareAuthParams(ExternalOrganizationEntity org) {
         Map<String, String> params = new HashMap<>();
-        params.put("api_key", org.getApiKey());
+        params.put(org.getRequestTemplate().getApiKeyParamName(), org.getRequestTokenConfig().getApiKey());
         return params;
     }
 }

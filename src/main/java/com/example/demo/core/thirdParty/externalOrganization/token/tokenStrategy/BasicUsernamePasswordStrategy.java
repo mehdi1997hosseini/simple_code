@@ -9,8 +9,8 @@ class BasicUsernamePasswordStrategy implements TokenStrategy {
     @Override
     public Map<String, String> prepareAuthParams(ExternalOrganizationEntity org) {
         Map<String, String> params = new HashMap<>();
-        params.put("username", org.getUsername());
-        params.put("password", org.getPassword());
+        params.put(org.getRequestTemplate().getUsernameParamName(), org.getRequestTokenConfig().getUsername());
+        params.put(org.getRequestTemplate().getPasswordParamName(), org.getRequestTokenConfig().getPassword());
         return params;
     }
 }

@@ -9,7 +9,7 @@ class SamlStrategy implements TokenStrategy {
     @Override
     public Map<String, String> prepareAuthParams(ExternalOrganizationEntity org) {
         Map<String, String> samlRequest = new HashMap<>();
-        samlRequest.put("saml_request", org.getSamlRequestXml());
+        samlRequest.put(org.getRequestTemplate().getSamlRequestXmlParamName(), org.getRequestTokenConfig().getSamlRequestXml());
         return samlRequest;
     }
 }
