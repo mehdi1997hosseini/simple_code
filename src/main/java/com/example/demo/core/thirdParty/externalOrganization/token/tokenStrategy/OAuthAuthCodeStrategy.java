@@ -9,11 +9,11 @@ class OAuthAuthCodeStrategy implements TokenStrategy {
     @Override
     public Map<String, String> prepareAuthParams(ExternalOrganizationEntity org) {
         Map<String, String> body = new HashMap<>();
-        body.put("code", org.getAuthCode());
-        body.put("client_id", org.getClientId());
-        body.put("client_secret", org.getClientSecret());
-        body.put("redirect_uri", org.getRedirectUri());
-        body.put("grant_type", "authorization_code");
+        body.put(org.getRequestTemplate().getAuthCodeParamName(), org.getRequestTokenConfig().getAuthCode());
+        body.put(org.getRequestTemplate().getClientIdParamName(), org.getRequestTokenConfig().getClientId());
+        body.put(org.getRequestTemplate().getClientSecretParamName(), org.getRequestTokenConfig().getClientSecret());
+        body.put(org.getRequestTemplate().getRedirectUriParamName(), org.getRequestTokenConfig().getRedirectUri());
+        body.put(org.getRequestTemplate().getGrantTypeParamName(), "authorization_code");
         return body;
     }
 }

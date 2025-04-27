@@ -89,8 +89,9 @@ public enum AuthType {
             default -> throw new IllegalArgumentException("Unsupported AuthType");
         };
         Map<String, String> body = tokenStrategy.prepareAuthParams(org);
-        HttpHeaders header = getHeader(body);
-        return new HttpEntity<>(body, header);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(org.getRequestTemplate().getContentTypeParamName(),org.getRequestTokenConfig().getContentType().name());
+        return new HttpEntity<>(body, headers);
     }
 
 }

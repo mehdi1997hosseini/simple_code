@@ -30,10 +30,10 @@ public class TokenServiceImpl implements TokenService {
     public ExternalTokenDto fetchTokenByRest(ExternalOrganizationEntity extOrgEntity) {
         try {
             Map<String, String> body = new HashMap<>();
-            body.put("client_id", extOrgEntity.getClientId());
-            body.put("client_secret", extOrgEntity.getClientSecret());
-            body.put("username", extOrgEntity.getUsername());
-            body.put("password", extOrgEntity.getPassword());
+            body.put("client_id", extOrgEntity.getRequestTokenConfig().getClientId());
+            body.put("client_secret", extOrgEntity.getRequestTokenConfig().getClientSecret());
+            body.put("username", extOrgEntity.getRequestTokenConfig().getUsername());
+            body.put("password", extOrgEntity.getRequestTokenConfig().getPassword());
             body.put("grant_type", "password");
 
             ResponseEntity<Map> response = restTemplate.postForEntity(
@@ -49,7 +49,7 @@ public class TokenServiceImpl implements TokenService {
                 if (expiresInRes != null) {
                     Integer expiresIn = (Integer) expiresInRes;
                     expiresAt = DateTimeZoneUtil.DurationAndInstantUtils.calculateExpiry(
-                            expiresIn, extOrgEntity.getTimeUnitType(), 50);
+                            expiresIn, extOrgEntity.getResponseTokenConfig().getTimeUnitType(), 50);
                 } else if (expiresAtRes != null) {
                     String expiresAtStr = (String) expiresAtRes;
                     expiresAt = DateTimeZoneUtil.DurationAndInstantUtils.calculateExpiry(
@@ -85,7 +85,7 @@ public class TokenServiceImpl implements TokenService {
     public ExternalTokenDto fetchTokenByRest(ExternalOrganizationEntity extOrgEntity, HttpMethod method) {
         HttpEntity<Map<String, String>> httpEntity = extOrgEntity.getAuthType().getHttpEntity(extOrgEntity);
         ResponseEntity<Map> response = restTemplate.exchange(extOrgEntity.getAuthUri(), method, httpEntity, Map.class);
-        return parseResponse(response,extOrgEntity.getTimeUnitType());
+        return parseResponse(response,extOrgEntity.getResponseTokenConfig().getTimeUnitType());
     }
 
     public ExternalTokenDto fetchTokenBySoap(ExternalOrganizationEntity extOrgEntity) {

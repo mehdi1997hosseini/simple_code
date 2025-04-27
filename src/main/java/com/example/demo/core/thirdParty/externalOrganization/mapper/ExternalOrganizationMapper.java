@@ -10,8 +10,8 @@ public interface ExternalOrganizationMapper extends BasicMapper<ExternalOrganiza
     @Override
     @Mappings({
             @Mapping(source = "orgName", target = "orgName", qualifiedByName = "stringToExternalOrganizationName"),
-            @Mapping(source = "timeUnitType", target = "timeUnitType", qualifiedByName = "stringToTimeUnitType"),
             @Mapping(source = "tokenType", target = "tokenType", qualifiedByName = "stringToTokenType"),
+            @Mapping(source = "httpMethod", target = "httpMethod", qualifiedByName = "stringToHttpMethod"),
             @Mapping(source = "authType", target = "authType", qualifiedByName = "stringToAuthType")
     })
     ExternalOrganizationEntity toEntity(ExternalOrganizationDto externalOrganizationDto);
@@ -19,14 +19,15 @@ public interface ExternalOrganizationMapper extends BasicMapper<ExternalOrganiza
     @Override
     @Mappings({
             @Mapping(source = "orgName", target = "orgName", qualifiedByName = "externalOrganizationNameToString"),
-            @Mapping(source = "timeUnitType", target = "timeUnitType", qualifiedByName = "timeUnitTypeToString"),
             @Mapping(source = "tokenType", target = "tokenType", qualifiedByName = "tokenTypeToString"),
+            @Mapping(source = "httpMethod", target = "httpMethod", qualifiedByName = "httpMethodToString"),
             @Mapping(source = "authType", target = "authType", qualifiedByName = "authTypeToString")
     })
     ExternalOrganizationDto toDto(ExternalOrganizationEntity externalOrganizationEntity);
 
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE )
+    @Mapping(source = "httpMethod", target = "httpMethod", qualifiedByName = "stringToHttpMethod")
     void updateFromDto(ExternalOrganizationDto dto, @MappingTarget ExternalOrganizationEntity entity);
 
 }
