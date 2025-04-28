@@ -44,4 +44,7 @@ public enum ContentType {
         throw new IllegalArgumentException("Unknown Content type: " + type);
     }
 
+    public String getValue() {
+        return value;
+    }
 }

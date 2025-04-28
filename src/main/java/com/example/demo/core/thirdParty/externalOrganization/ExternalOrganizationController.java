@@ -1,7 +1,7 @@
 package com.example.demo.core.thirdParty.externalOrganization;
 
 import com.example.demo.core.controller.BasicController;
-import com.example.demo.core.logger.annotation.LoggableRequestResponseApi;
+import com.example.demo.core.logger.annotation.LoggableRequestResponseApiInDB;
 import com.example.demo.core.thirdParty.externalOrganization.dto.ExternalOrganizationDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,19 +21,19 @@ public class ExternalOrganizationController extends BasicController<ExternalOrga
     }
 
     @PostMapping("save")
-    @LoggableRequestResponseApi
+    @LoggableRequestResponseApiInDB
     public ResponseEntity<?> save(@RequestBody @NotNull ExternalOrganizationDto externalOrganization) {
         return new ResponseEntity<>(service.saveOrUpdate(externalOrganization), HttpStatus.CREATED);
     }
 
     @PostMapping("update")
-    @LoggableRequestResponseApi
+    @LoggableRequestResponseApiInDB
     public ResponseEntity<?> update(@RequestBody @NotNull ExternalOrganizationDto externalOrganization) {
         return new ResponseEntity<>(service.saveOrUpdate(externalOrganization), HttpStatus.OK);
     }
 
     @PostMapping("refresh-manually")
-    @LoggableRequestResponseApi
+    @LoggableRequestResponseApiInDB
     public ResponseEntity<?> refreshManually(@RequestParam @NotBlank String organizationName) {
         externalOrganizationTokenService.refreshManuallyExternalOrganization(organizationName);
         return new ResponseEntity<>(HttpStatus.OK);

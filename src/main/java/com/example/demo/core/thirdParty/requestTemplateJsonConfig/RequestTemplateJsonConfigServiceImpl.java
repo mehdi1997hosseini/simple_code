@@ -15,7 +15,8 @@ public class RequestTemplateJsonConfigServiceImpl extends BasicServiceImpl<Reque
     }
 
     @Override
-    public void save(RequestTemplateJsonConfigDto dto) {
-        save(mapper.toEntity(dto));
+    public RequestTemplateJsonConfigEntity save(RequestTemplateJsonConfigDto dto) {
+        return repository.save(mapper.toEntity(dto));
     }
+
 }

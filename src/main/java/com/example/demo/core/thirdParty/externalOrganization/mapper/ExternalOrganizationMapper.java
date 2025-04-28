@@ -3,9 +3,12 @@ package com.example.demo.core.thirdParty.externalOrganization.mapper;
 import com.example.demo.core.mapper.BasicMapper;
 import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizationEntity;
 import com.example.demo.core.thirdParty.externalOrganization.dto.ExternalOrganizationDto;
+import com.example.demo.core.thirdParty.requestTemplateJsonConfig.RequestTemplateJsonConfigMapper;
+import com.example.demo.core.thirdParty.requestTokenConfig.RequestTokenConfigMapper;
+import com.example.demo.core.thirdParty.responseTokenConfig.ResponseTokenConfigMapper;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {ExternalOrganizationMapHelper.class})
+@Mapper(componentModel = "spring", uses = {ExternalOrganizationMapHelper.class, RequestTokenConfigMapper.class, RequestTemplateJsonConfigMapper.class, ResponseTokenConfigMapper.class})
 public interface ExternalOrganizationMapper extends BasicMapper<ExternalOrganizationEntity, ExternalOrganizationDto> {
     @Override
     @Mappings({
@@ -26,7 +29,7 @@ public interface ExternalOrganizationMapper extends BasicMapper<ExternalOrganiza
     ExternalOrganizationDto toDto(ExternalOrganizationEntity externalOrganizationEntity);
 
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE )
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "httpMethod", target = "httpMethod", qualifiedByName = "stringToHttpMethod")
     void updateFromDto(ExternalOrganizationDto dto, @MappingTarget ExternalOrganizationEntity entity);
 

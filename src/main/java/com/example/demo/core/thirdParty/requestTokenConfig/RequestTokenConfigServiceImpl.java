@@ -5,9 +5,10 @@ import com.example.demo.core.thirdParty.requestTokenConfig.dto.RequestTokenConfi
 import org.springframework.stereotype.Service;
 
 @Service
-public class RequestTokenConfigServiceImpl extends BasicServiceImpl<RequestTokenConfigEntity,String,RequestTokenConfigRepository> implements  RequestTokenConfigService {
+public class RequestTokenConfigServiceImpl extends BasicServiceImpl<RequestTokenConfigEntity, String, RequestTokenConfigRepository> implements RequestTokenConfigService {
 
     private final RequestTokenConfigMapper mapper;
+
     public RequestTokenConfigServiceImpl(RequestTokenConfigRepository repository, RequestTokenConfigMapper mapper) {
         super(repository);
         this.mapper = mapper;
@@ -15,8 +16,8 @@ public class RequestTokenConfigServiceImpl extends BasicServiceImpl<RequestToken
 
 
     @Override
-    public void save(RequestTokenConfigDto dto) {
-        save(mapper.toEntity(dto));
+    public RequestTokenConfigEntity save(RequestTokenConfigDto dto) {
+        return repository.save(mapper.toEntity(dto));
     }
 
 }

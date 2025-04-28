@@ -4,5 +4,5 @@ import com.example.demo.core.service.BasicService;
 import com.example.demo.core.thirdParty.requestTokenConfig.dto.RequestTokenConfigDto;
 
 public interface RequestTokenConfigService extends BasicService<RequestTokenConfigEntity, String> {
-    void save(RequestTokenConfigDto dto);
+    RequestTokenConfigEntity save(RequestTokenConfigDto dto);
 }
