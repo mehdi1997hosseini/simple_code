@@ -1,27 +1,24 @@
 package com.example.demo.core.thirdParty.externalOrganization.token.service;
 
 import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizationEntity;
-import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizationName;
 import com.example.demo.core.thirdParty.externalOrganization.token.ExternalTokenDto;
 import com.example.demo.core.utility.DateTimeZoneUtil;
-import com.example.demo.core.utility.TimeUnitType;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.*;
+import org.slf4j.MDC;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Slf4j
 @Service
 public class TokenServiceImpl implements TokenService {
     private final RestTemplate restTemplate;
-    private final String accessToken = "access_token";
-    private final String expiresIn = "expires_in";
-    private final String expiresAt = "expires_at";
 
     public TokenServiceImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -40,9 +37,9 @@ public class TokenServiceImpl implements TokenService {
                     extOrgEntity.getAuthUri(), body, Map.class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                String token = (String) response.getBody().get(accessToken);
-                Object expiresInRes = response.getBody().get(expiresIn);
-                Object expiresAtRes = response.getBody().get(expiresAt);
+                String token = (String) response.getBody().get("access_token");
+                Object expiresInRes = response.getBody().get("expires_in");
+                Object expiresAtRes = response.getBody().get("expires_at");
 
                 Instant expiresAt = null;
 
@@ -85,24 +82,24 @@ public class TokenServiceImpl implements TokenService {
     public ExternalTokenDto fetchTokenByRest(ExternalOrganizationEntity extOrgEntity, HttpMethod method) {
         HttpEntity<Map<String, String>> httpEntity = extOrgEntity.getAuthType().getHttpEntity(extOrgEntity);
         ResponseEntity<Map> response = restTemplate.exchange(extOrgEntity.getAuthUri(), method, httpEntity, Map.class);
-        return parseResponse(response,extOrgEntity.getResponseTokenConfig().getTimeUnitType());
+        return parseResponse(response, extOrgEntity);
     }
 
     public ExternalTokenDto fetchTokenBySoap(ExternalOrganizationEntity extOrgEntity) {
         return new ExternalTokenDto(null, null, true, 0);
     }
 
-    private ExternalTokenDto parseResponse(ResponseEntity<Map> response, TimeUnitType timeUnitType) {
+    private ExternalTokenDto parseResponse(ResponseEntity<Map> response, ExternalOrganizationEntity externalOrganization) {
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            String token = (String) response.getBody().get(accessToken);
-            Object expiresInRes = response.getBody().get(expiresIn);
-            Object expiresAtRes = response.getBody().get(expiresAt);
+            String token = (String) response.getBody().get(externalOrganization.getResponseTokenConfig().getTokenFieldName());
+            Object expiresInRes = response.getBody().get(externalOrganization.getResponseTokenConfig().getExpireTimeFieldName());
+            Object expiresAtRes = response.getBody().get(externalOrganization.getResponseTokenConfig().getExpireTimeFieldName());
 
             Instant expiresAt = null;
 
             if (expiresInRes != null) {
                 expiresAt = DateTimeZoneUtil.DurationAndInstantUtils.calculateExpiry(
-                        (Integer) expiresInRes, timeUnitType, 50);
+                        (Integer) expiresInRes, externalOrganization.getResponseTokenConfig().getTimeUnitType(), 50);
             } else if (expiresAtRes != null) {
                 String expiresAtStr = (String) expiresAtRes;
                 expiresAt = DateTimeZoneUtil.DurationAndInstantUtils.calculateExpiry(
@@ -111,7 +108,7 @@ public class TokenServiceImpl implements TokenService {
 
             // اگر اطلاعات ناقص بود، هیچ توکنی برنگردونه
             if (token == null || expiresAt == null) {
-                log.error("Token یا Expiry زمان معتبر نیست.");
+                log.error("request id : {} - Token or Expiry Time is not valid " , MDC.get("requestId"));
 
                 return ExternalTokenDto.builder()
                         .token(null)

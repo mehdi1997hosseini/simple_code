@@ -90,7 +90,7 @@ public enum AuthType {
         };
         Map<String, String> body = tokenStrategy.prepareAuthParams(org);
         HttpHeaders headers = new HttpHeaders();
-        headers.set(org.getRequestTemplate().getContentTypeParamName(),org.getRequestTokenConfig().getContentType().name());
+        headers.set(org.getRequestTemplate().getContentTypeParamName(),org.getRequestTokenConfig().getContentType().getValue());
         return new HttpEntity<>(body, headers);
     }
 

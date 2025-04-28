@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD , ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LoggableRequestResponseApi {
+public @interface LoggableRequestResponseApiInDB {
     String value() default "";
 }

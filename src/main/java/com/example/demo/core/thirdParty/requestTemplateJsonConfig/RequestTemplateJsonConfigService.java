@@ -5,6 +5,6 @@ import com.example.demo.core.thirdParty.requestTemplateJsonConfig.dto.RequestTem
 
 public interface RequestTemplateJsonConfigService extends BasicService<RequestTemplateJsonConfigEntity,String> {
 
-    void save(RequestTemplateJsonConfigDto dto);
+    RequestTemplateJsonConfigEntity save(RequestTemplateJsonConfigDto dto);
 
 }
