@@ -45,8 +45,6 @@ public class TokenCacheServiceImpl implements TokenCacheService {
     }
 
     public ExternalTokenDto getToken(ExternalOrganizationName orgName) {
-        if (tokenMap.isEmpty())
-            return null;
         if (tokenMap.containsKey(orgName)) {
             return tokenMap.get(orgName);
         }
