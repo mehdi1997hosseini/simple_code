@@ -1,0 +1,9 @@
+package com.example.demo.core.thirdParty.externalOrganizationCommunication.restService.apiService.externalOrganizationApiService.dao;
+
+import com.example.demo.core.repository.BasicRepository;
+import com.example.demo.core.thirdParty.externalOrganizationCommunication.restService.apiService.externalOrganizationApiService.ExternalOrganizationApiServiceEntity;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ExternalOrganizationApiServiceRepository extends BasicRepository<ExternalOrganizationApiServiceEntity, String> {
+}

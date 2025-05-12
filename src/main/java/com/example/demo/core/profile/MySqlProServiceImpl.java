@@ -2,9 +2,9 @@ package com.example.demo.core.profile;
 
 import com.example.demo.core.config.LoggingConfig;
 import com.example.demo.core.logger.httpRequestLog.HttpRequestLogService;
-import com.example.demo.core.thirdParty.externalOrganization.ExternalOrganizationService;
-import com.example.demo.core.thirdParty.externalOrganization.cache.ExternalOrganizationCatchService;
-import com.example.demo.core.thirdParty.externalOrganization.token.TokenSchedulerService;
+import com.example.demo.core.thirdParty.externalOrganizationCommunication.restService.authService.externalOrganizationAuthService.ExternalOrganizationAuthService;
+import com.example.demo.core.thirdParty.externalOrganizationCommunication.restService.authService.externalOrganizationAuthService.token.TokenSchedulerService;
+import com.example.demo.core.thirdParty.externalOrganizationCommunication.restService.cache.authConfigCache.ExternalOrganizationAuthCatchService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -15,15 +15,17 @@ import java.util.Optional;
 @Profile("mysql")
 public class MySqlProServiceImpl extends LoggingConfig implements ProfilesService, CommandLineRunner/*, Filter */ {
 
-    private final ExternalOrganizationService externalOrganizationService;
-    private final ExternalOrganizationCatchService externalOrganizationCatchService;
+    private final ExternalOrganizationAuthService externalOrganizationAuthService;
+    private final ExternalOrganizationAuthCatchService externalOrganizationAuthCatchService;
     private final TokenSchedulerService tokenSchedulerService;
 
-    public MySqlProServiceImpl(ExternalOrganizationService externalOrganizationService, ExternalOrganizationCatchService externalOrganizationCatchService,
-                               TokenSchedulerService tokenSchedulerService, HttpRequestLogService httpRequestLogService) {
+    public MySqlProServiceImpl(ExternalOrganizationAuthService externalOrganizationAuthService,
+                               ExternalOrganizationAuthCatchService externalOrganizationAuthCatchService,
+                               TokenSchedulerService tokenSchedulerService,
+                               HttpRequestLogService httpRequestLogService) {
         super(httpRequestLogService);
-        this.externalOrganizationService = externalOrganizationService;
-        this.externalOrganizationCatchService = externalOrganizationCatchService;
+        this.externalOrganizationAuthService = externalOrganizationAuthService;
+        this.externalOrganizationAuthCatchService = externalOrganizationAuthCatchService;
         this.tokenSchedulerService = tokenSchedulerService;
     }
 
@@ -38,8 +40,8 @@ public class MySqlProServiceImpl extends LoggingConfig implements ProfilesServic
     }
 
     private void tokenProcess() {
-        externalOrganizationCatchService.refreshAllCatch(externalOrganizationService.findAllInCache());
-        Optional.ofNullable(externalOrganizationCatchService.findAllExternalOrganization())
+        externalOrganizationAuthCatchService.refreshAllCatch(externalOrganizationAuthService.findAllInCacheWhenStartApp());
+        Optional.ofNullable(externalOrganizationAuthCatchService.findAllExternalOrganization())
                 .filter(map -> !map.isEmpty())
                 .ifPresent(tokenSchedulerService::initTokens);
     }

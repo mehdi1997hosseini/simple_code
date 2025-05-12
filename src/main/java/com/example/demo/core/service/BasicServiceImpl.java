@@ -5,12 +5,10 @@ import com.example.demo.core.repository.BasicRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaUpdate;
 import jakarta.persistence.criteria.Root;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Transactional
-public class BasicServiceImpl<E extends BasicEntity<ID>, ID, R extends BasicRepository<E, ID>> extends BaseEntityManager implements BasicService<E, ID> {
+public non-sealed class BasicServiceImpl<E extends BasicEntity<ID>, ID, R extends BasicRepository<E, ID>> extends BasicEntityManager implements BasicService<E, ID> {
     protected Logger logger;
     protected R repository;
     private Class<E> entityClass;
