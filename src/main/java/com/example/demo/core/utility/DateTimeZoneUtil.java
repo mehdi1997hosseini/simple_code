@@ -3,7 +3,10 @@ package com.example.demo.core.utility;
 import java.time.Duration;
 import java.time.Instant;
 
-public class DateTimeZoneUtil {
+public abstract class DateTimeZoneUtil {
+
+    private DateTimeZoneUtil() {
+    }
 
     /**
      * @Description
@@ -11,6 +14,10 @@ public class DateTimeZoneUtil {
      * @FA <p>این کلاس داخلی عملیات های مربوط به تاریخ را انجام میدهد </p>
      */
     public static class DateUtil {
+        private DateUtil() {
+        }
+
+
     }
 
     /**
@@ -19,10 +26,16 @@ public class DateTimeZoneUtil {
      * @FA <p>این کلاس داخلی عملیات های مربوط به زمان را انجام میدهد </p>
      */
     public static class TimeUtil {
+        private TimeUtil() {
+        }
+
 
     }
 
-    public static class DurationAndInstantUtils{
+    public static class DurationAndInstantUtils {
+        private DurationAndInstantUtils() {
+        }
+
         public static Instant calculateExpiry(long expiresIn, TimeUnitType timeUnit, double refreshTriggerRatio) {
             return calculateExpiry(expiresIn, timeUnit, refreshTriggerRatio, false);
         }
@@ -52,6 +65,9 @@ public class DateTimeZoneUtil {
                 case MINUTES -> Duration.ofMinutes(expiresIn);
                 case HOURS -> Duration.ofHours(expiresIn);
                 case DAYS -> Duration.ofDays(expiresIn);
+                case CUSTOM_SECONDS -> Duration.ofSeconds(expiresIn);
+                case CUSTOM_MINUTES -> Duration.ofMinutes(expiresIn);
+                case CUSTOM_HOURS -> Duration.ofHours(expiresIn);
                 default -> throw new IllegalArgumentException("Unsupported TimeUnit: " + timeUnit);
             };
         }
@@ -89,7 +105,7 @@ public class DateTimeZoneUtil {
                 case SECONDS -> Instant.ofEpochSecond(value);
                 case MINUTES -> Instant.ofEpochSecond(value * 60);
                 case HOURS -> Instant.ofEpochSecond(value * 3600);
-                case DAYS -> Instant.ofEpochSecond((value * 3600)*24);
+                case DAYS -> Instant.ofEpochSecond((value * 3600) * 24);
                 default -> throw new IllegalArgumentException("Unsupported time unit: " + unit);
             };
         }
