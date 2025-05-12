@@ -1,0 +1,8 @@
+package com.example.demo.core.thirdParty.externalOrganizationCommunication.restService.apiService.requestHeaderApiConfig.dao;
+
+
+import com.example.demo.core.service.BasicInfrastructureService;
+import com.example.demo.core.thirdParty.externalOrganizationCommunication.restService.apiService.requestHeaderApiConfig.RequestHeaderApiConfigEntity;
+
+public interface RequestHeaderApiConfigInfrastructureService extends BasicInfrastructureService<RequestHeaderApiConfigEntity, String> {
+}

@@ -2,7 +2,7 @@ package com.example.demo.app.Test;
 
 import com.example.demo.core.controller.BasicController;
 import com.example.demo.core.logger.annotation.LoggableRequestResponseApiInDB;
-import com.example.demo.core.thirdParty.externalOrganization.token.cache.TokenCacheService;
+import com.example.demo.core.thirdParty.externalOrganizationCommunication.restService.cache.tokenCache.TokenCacheService;
 import com.example.demo.core.utility.validation.nin.NIN;
 import com.example.demo.core.utility.validation.nin.NIN_TypeVld;
 import org.springframework.http.HttpStatus;
@@ -43,7 +43,7 @@ public class TestController extends BasicController<TestEntity, Long, TestServic
     @PostMapping("getTokenTest")
     public ResponseEntity<Map<String, Object>> getTokenTest(@RequestBody TokenRequestTest body) {
         Map<String, Object> response = new HashMap<>();
-        response.put("access_token", body.getClient_id()+"+++" + LocalTime.now().toString() + "+++"+ body.getUsername() + "123456" + body.getPassword());
+        response.put("access_token", body.getClient_id() + "+++" + LocalTime.now().toString() + "+++" + body.getUsername() + "123456" + body.getPassword());
         response.put("expires_in", 2);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
