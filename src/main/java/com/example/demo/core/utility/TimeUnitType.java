@@ -7,7 +7,10 @@ public enum TimeUnitType {
     SECONDS,
     MINUTES,
     HOURS,
-    DAYS;
+    DAYS,
+    CUSTOM_SECONDS,
+    CUSTOM_MINUTES,
+    CUSTOM_HOURS;
 
 
     public static TimeUnitType fromString(String name) {
