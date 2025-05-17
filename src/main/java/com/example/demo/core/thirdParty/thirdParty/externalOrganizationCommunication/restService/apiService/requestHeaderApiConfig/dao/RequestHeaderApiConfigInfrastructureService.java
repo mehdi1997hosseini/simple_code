@@ -1,0 +1,8 @@
+package com.example.demo.core.thirdParty.thirdParty.externalOrganizationCommunication.restService.apiService.requestHeaderApiConfig.dao;
+
+
+import ir.smarttrustco.pssnote.core.service.BasicInfrastructureService;
+import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.restService.apiService.requestHeaderApiConfig.RequestHeaderApiConfigEntity;
+
+public interface RequestHeaderApiConfigInfrastructureService extends BasicInfrastructureService<RequestHeaderApiConfigEntity, String> {
+}

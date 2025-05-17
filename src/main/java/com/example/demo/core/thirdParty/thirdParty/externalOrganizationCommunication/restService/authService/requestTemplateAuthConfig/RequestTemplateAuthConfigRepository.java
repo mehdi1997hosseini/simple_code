@@ -1,0 +1,8 @@
+package com.example.demo.core.thirdParty.thirdParty.externalOrganizationCommunication.restService.authService.requestTemplateAuthConfig;
+
+import ir.smarttrustco.pssnote.core.repository.BasicRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface RequestTemplateAuthConfigRepository extends BasicRepository<RequestTemplateAuthConfigEntity, String> {
+}

@@ -1,0 +1,12 @@
+package com.example.demo.core.thirdParty.thirdParty.externalOrganizationCommunication.restService.apiService.externalOrganizationApiService.dao;
+
+import ir.smarttrustco.pssnote.core.service.BasicInfrastructureService;
+import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.restService.apiService.externalOrganizationApiService.ExternalOrganizationApiServiceEntity;
+import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.restService.enums.ExternalOrganizationName;
+
+import java.util.List;
+
+public interface ExternalOrganizationApiServiceInfrastructureService extends BasicInfrastructureService<ExternalOrganizationApiServiceEntity, String> {
+
+    List<ExternalOrganizationApiServiceEntity> findByExternalOrgName(ExternalOrganizationName extOrgName);
+}
