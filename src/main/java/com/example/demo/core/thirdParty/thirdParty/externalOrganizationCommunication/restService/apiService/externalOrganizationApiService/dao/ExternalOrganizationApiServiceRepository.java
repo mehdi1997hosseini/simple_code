@@ -1,0 +1,9 @@
+package com.example.demo.core.thirdParty.thirdParty.externalOrganizationCommunication.restService.apiService.externalOrganizationApiService.dao;
+
+import ir.smarttrustco.pssnote.core.repository.BasicRepository;
+import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.restService.apiService.externalOrganizationApiService.ExternalOrganizationApiServiceEntity;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ExternalOrganizationApiServiceRepository extends BasicRepository<ExternalOrganizationApiServiceEntity,String> {
+}
