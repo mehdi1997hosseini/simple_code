@@ -1,7 +1,10 @@
 package com.example.demo.core.thirdParty.thirdParty.requestRestTemplateCommunication;
 
-import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.parser.ExternalUnifiedResponseFailed;
+import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.parser.ExternalUnifiedResponse;
+import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.parser.ExternalUnifiedServerFailureResponse;
 import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.restService.apiService.externalOrganizationApiService.ExternalOrganizationApiServiceEntity;
+
+import java.util.List;
 
 /**
  * ==============================================
@@ -55,5 +58,21 @@ public interface CommunicationExternalOrganizationService {
      * @param <F>                                  Type of failed response (must extend ExternalUnifiedResponseFailed) / نوع پاسخ ناموفق
      * @return Either success or failure response / شیء پاسخ موفق یا ناموفق
      */
-    <T, R, F extends ExternalUnifiedResponseFailed> Object sendRequest(T requestBody, ExternalOrganizationApiServiceEntity externalOrganizationApiServiceEntity, Class<R> responseAccept, Class<F> responseFailed);
+    <T, R, F extends ExternalUnifiedServerFailureResponse> ExternalUnifiedResponse sendRequest(T requestBody, ExternalOrganizationApiServiceEntity externalOrganizationApiServiceEntity, Class<R> responseAccept, Class<F> responseFailed);
+    /**
+     * <p>Send a request to an external organization, handling success and multiple possible failure response types.</p>
+     * <p>ارسال درخواست به سازمان بیرونی با امکان مدیریت پاسخ موفق و چندین مدل پاسخ ناموفق</p>
+     * <p>
+     *
+     * @param requestBody                          The request body / بدنه‌ی درخواستی
+     * @param externalOrganizationApiServiceEntity API metadata for the target service / متادیتای سرویس خارجی
+     * @param responseAccept                       The expected class of success response / کلاس پاسخ موفق
+     * @param responseFailed                       A list of possible failure response classes / لیستی از کلاس‌های پاسخ ناموفق ممکن
+     * @param <T>                                  Type of request body / نوع داده ورودی
+     * @param <R>                                  Type of accepted response / نوع پاسخ موفق
+     * @param <F>                                  Type of failed response (must extend ExternalUnifiedResponseFailed) / نوع پاسخ ناموفق
+     * @return Either success or failure response / شیء پاسخ موفق یا یکی از پاسخ‌های ناموفق
+     */
+    <T, R, F extends ExternalUnifiedServerFailureResponse> Object sendRequest(T requestBody, ExternalOrganizationApiServiceEntity externalOrganizationApiServiceEntity, Class<R> responseAccept, List<Class<F>> responseFailed);
+
 }

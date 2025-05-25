@@ -4,12 +4,10 @@ import ir.smarttrustco.pssnote.core.mapper.BasicMapper;
 import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.restService.apiService.externalOrganizationApiService.ExternalOrganizationApiServiceEntity;
 import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.restService.apiService.externalOrganizationApiService.dto.ExternalOrganizationApiServiceDto;
 import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.restService.apiService.requestHeaderApiConfig.mapper.RequestHeaderApiConfigMapper;
-import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.restService.authService.externalOrganizationAuthService.ExternalOrganizationAuthServiceEntity;
-import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.restService.authService.externalOrganizationAuthService.dto.ExternalOrganizationAuthServiceDto;
 import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.restService.enums.mapperHelper.ExternalOrganizationCommunicationEnumMapHelper;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {ExternalOrganizationCommunicationEnumMapHelper.class , RequestHeaderApiConfigMapper.class})
+@Mapper(componentModel = "spring", uses = {ExternalOrganizationCommunicationEnumMapHelper.class, RequestHeaderApiConfigMapper.class})
 public interface ExternalOrganizationApiServiceMapper extends BasicMapper<ExternalOrganizationApiServiceEntity, ExternalOrganizationApiServiceDto> {
 
     @Override

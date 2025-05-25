@@ -1,12 +1,16 @@
 package com.example.demo.core.thirdParty.thirdParty.externalOrganizationCommunication.parser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ir.smarttrustco.pssnote.app.thirdParty.responseCommunicationErrorHandler.ResponseCommunicationErrorHandler;
 import ir.smarttrustco.pssnote.core.exceptionHandler.exception.AppRunTimeException;
-import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.parser.errorHandler.ResponseCommunicationErrorHandler;
 import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.restService.enums.ExternalOrganizationName;
 import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.restService.enums.ResponseType;
 import ir.smarttrustco.pssnote.core.thirdParty.externalOrganizationCommunication.restService.exception.ExternalOrganizationException;
 import org.springframework.http.HttpStatus;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * ==============================================
@@ -15,6 +19,7 @@ import org.springframework.http.HttpStatus;
  * ==============================================
  * <p>
  *
+ * @author mehdi.hosseini
  * @Description :
  * This interface provides a common structure to parse and classify responses
  * received from external organization APIs. It supports both successful and
@@ -27,7 +32,6 @@ import org.springframework.http.HttpStatus;
  * - تجزیه‌ی پاسخ دریافتی به دو بخش موفق و ناموفق
  * - ایجاد خروجی استاندارد برای مدیریت بهتر در لایه‌ی سرویسی
  * - تفکیک منطق تبدیل پاسخ‌ها از منطق ارتباطات
- * @author mehdi.hosseini
  */
 public interface ExternalOrganizationCommunicationResponseParser {
 
@@ -60,7 +64,11 @@ public interface ExternalOrganizationCommunicationResponseParser {
      * @return ExternalUnifiedResponse پاسخ تحلیل‌شده به صورت یکپارچه
      * @throws AppRunTimeException در صورت بروز خطا در تبدیل یا تحلیل پاسخ
      */
-    default <A, F extends ExternalUnifiedResponseFailed> ExternalUnifiedResponse parseResponse(String responseBody, Class<A> responseAcceptObject, Class<F> responseFailureObject) {
+    default <A, F extends ExternalUnifiedServerFailureResponse> ExternalUnifiedResponse parseResponse(String responseBody, Class<A> responseAcceptObject, Class<F> responseFailureObject) {
+        return parseResponse(responseBody, responseAcceptObject, wrapSingleFailureClass(responseFailureObject));
+    }
+
+    default <A, F extends ExternalUnifiedServerFailureResponse> ExternalUnifiedResponse parseResponse(String responseBody, Class<A> responseAcceptObject, List<Class<F>> responseFailureObject) {
         try {
             A responseSuccess = objectMapper.readValue(responseBody, responseAcceptObject);
             return new ExternalUnifiedResponse(true, getOrganizationName().getTitle(), responseSuccess, ResponseType.ACCEPTED);
@@ -69,13 +77,30 @@ public interface ExternalOrganizationCommunicationResponseParser {
         }
     }
 
-    private <F extends ExternalUnifiedResponseFailed> ExternalUnifiedResponse handleFailureResponse(String responseBody, Class<F> responseFailureObject) {
+    private <F extends ExternalUnifiedServerFailureResponse> ExternalUnifiedResponse handleFailureResponse(String responseBody, Class<F> responseFailureObject) {
         try {
             F failureResponseObject = objectMapper.readValue(responseBody, responseFailureObject);
-            return new ExternalUnifiedResponse(false, getOrganizationName().getTitle(), ResponseCommunicationErrorHandler.getFailedResponse(getOrganizationName(), failureResponseObject.getErrorCode()), ResponseType.REJECTED);
+            Optional<ExternalErrorCodeResolver> failedResponse = ResponseCommunicationErrorHandler.getFailedResponse(getOrganizationName(), failureResponseObject.getErrorCode());
+            return new ExternalUnifiedResponse(false, getOrganizationName().getTitle(), failedResponse, ResponseType.REJECTED);
         } catch (Exception e2) {
             return new ExternalUnifiedResponse(false, getOrganizationName().getTitle(), "Request error: " + e2.getMessage(), ResponseType.ERROR);
         }
     }
 
+    private <F extends ExternalUnifiedServerFailureResponse> ExternalUnifiedResponse handleFailureResponse(String responseBody, List<Class<F>> responseFailureObject) {
+        for (Class<F> failedClass : responseFailureObject) {
+            try {
+                F failureResponseObject = objectMapper.readValue(responseBody, failedClass);
+                Optional<ExternalErrorCodeResolver> failedResponse = ResponseCommunicationErrorHandler.getFailedResponse(getOrganizationName(), failureResponseObject.getErrorCode());
+                return new ExternalUnifiedResponse(false, getOrganizationName().getTitle(), failedResponse, ResponseType.REJECTED);
+            } catch (Exception e2) {
+            }
+        }
+        return new ExternalUnifiedResponse(false, getOrganizationName().getTitle(), "Request error : " + responseBody, ResponseType.ERROR);
+    }
+
+    // --- متد کمکی برای تبدیل یک کلاس به لیست ---
+    private <F extends ExternalUnifiedServerFailureResponse> List<Class<F>> wrapSingleFailureClass(Class<F> failureClass) {
+        return Collections.singletonList(failureClass);
+    }
 }
